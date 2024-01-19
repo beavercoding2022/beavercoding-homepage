@@ -37,21 +37,209 @@ export interface Database {
       customers: {
         Row: {
           id: string
-          stripe_customer_id: string | null
+          payment_service_customer_id: string | null
         }
         Insert: {
           id: string
-          stripe_customer_id?: string | null
+          payment_service_customer_id?: string | null
         }
         Update: {
           id?: string
-          stripe_customer_id?: string | null
+          payment_service_customer_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "customers_id_fkey"
             columns: ["id"]
             isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      post_categories: {
+        Row: {
+          id: number
+          name: string
+          post_id: number
+        }
+        Insert: {
+          id?: never
+          name: string
+          post_id: number
+        }
+        Update: {
+          id?: never
+          name?: string
+          post_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_categories_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      post_comments: {
+        Row: {
+          content: string
+          id: number
+          parent_comment_id: number | null
+          post_id: number
+          section_order: number
+          user_id: string
+        }
+        Insert: {
+          content: string
+          id?: never
+          parent_comment_id?: number | null
+          post_id: number
+          section_order?: number
+          user_id: string
+        }
+        Update: {
+          content?: string
+          id?: never
+          parent_comment_id?: number | null
+          post_id?: number
+          section_order?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      post_sections: {
+        Row: {
+          content: string
+          id: number
+          post_id: number
+          section_order: number
+          user_id: string
+        }
+        Insert: {
+          content: string
+          id?: never
+          post_id: number
+          section_order?: number
+          user_id: string
+        }
+        Update: {
+          content?: string
+          id?: never
+          post_id?: number
+          section_order?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_sections_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_sections_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      post_tags: {
+        Row: {
+          id: number
+          post_id: number
+          tag: string
+        }
+        Insert: {
+          id?: never
+          post_id: number
+          tag: string
+        }
+        Update: {
+          id?: never
+          post_id?: number
+          tag?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_tags_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      posts: {
+        Row: {
+          created_at: string
+          id: number
+          posting_type: Database["public"]["Enums"]["posting_type"] | null
+          public: boolean
+          slug: string
+          team_id: number | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          posting_type?: Database["public"]["Enums"]["posting_type"] | null
+          public: boolean
+          slug: string
+          team_id?: number | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          posting_type?: Database["public"]["Enums"]["posting_type"] | null
+          public?: boolean
+          slug?: string
+          team_id?: number | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -66,7 +254,7 @@ export interface Database {
           interval: Database["public"]["Enums"]["pricing_plan_interval"] | null
           interval_count: number | null
           metadata: Json | null
-          product_id: string | null
+          product_id: string
           trial_period_days: number | null
           type: Database["public"]["Enums"]["pricing_type"] | null
           unit_amount: number | null
@@ -79,7 +267,7 @@ export interface Database {
           interval?: Database["public"]["Enums"]["pricing_plan_interval"] | null
           interval_count?: number | null
           metadata?: Json | null
-          product_id?: string | null
+          product_id: string
           trial_period_days?: number | null
           type?: Database["public"]["Enums"]["pricing_type"] | null
           unit_amount?: number | null
@@ -92,7 +280,7 @@ export interface Database {
           interval?: Database["public"]["Enums"]["pricing_plan_interval"] | null
           interval_count?: number | null
           metadata?: Json | null
-          product_id?: string | null
+          product_id?: string
           trial_period_days?: number | null
           type?: Database["public"]["Enums"]["pricing_type"] | null
           unit_amount?: number | null
@@ -203,10 +391,56 @@ export interface Database {
           }
         ]
       }
+      teams: {
+        Row: {
+          id: number
+          name: string
+        }
+        Insert: {
+          id?: never
+          name: string
+        }
+        Update: {
+          id?: never
+          name?: string
+        }
+        Relationships: []
+      }
+      user_teams: {
+        Row: {
+          team_id: number
+          user_id: string
+        }
+        Insert: {
+          team_id: number
+          user_id: string
+        }
+        Update: {
+          team_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_teams_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_teams_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       users: {
         Row: {
           avatar_url: string | null
           billing_address: Json | null
+          connection_status: Database["public"]["Enums"]["user_connection_status"]
           full_name: string | null
           id: string
           payment_method: Json | null
@@ -214,6 +448,7 @@ export interface Database {
         Insert: {
           avatar_url?: string | null
           billing_address?: Json | null
+          connection_status?: Database["public"]["Enums"]["user_connection_status"]
           full_name?: string | null
           id: string
           payment_method?: Json | null
@@ -221,6 +456,7 @@ export interface Database {
         Update: {
           avatar_url?: string | null
           billing_address?: Json | null
+          connection_status?: Database["public"]["Enums"]["user_connection_status"]
           full_name?: string | null
           id?: string
           payment_method?: Json | null
@@ -243,6 +479,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
+      posting_type: "blog" | "docs" | "portfolio"
       pricing_plan_interval: "day" | "week" | "month" | "year"
       pricing_type: "one_time" | "recurring"
       subscription_status:
@@ -254,6 +491,7 @@ export interface Database {
         | "past_due"
         | "unpaid"
         | "paused"
+      user_connection_status: "online" | "offline"
     }
     CompositeTypes: {
       [_ in never]: never

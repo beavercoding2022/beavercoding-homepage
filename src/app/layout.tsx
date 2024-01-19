@@ -9,8 +9,9 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: 'Next.js and Supabase Starter Kit',
-  description: 'The fastest way to build apps with Next.js and Supabase',
+  title: '비버코딩 홈페이지',
+  description:
+    '비버코딩은 비즈니스를 위한 가장 단순하고 강력한 해결책을 제시합니다.',
 };
 
 export default function RootLayout({
@@ -19,14 +20,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
+    <html lang="ko" className={GeistSans.className}>
       <body className="bg-background text-foreground">
         <SupabaseProvider>
           <Navbar />
-          <main className="min-h-screen flex flex-col items-center">
-            {children}
-          </main>
+          <div className="max-w-6xl px-6 mx-auto">
+            <main
+              id="skip"
+              className="min-h-screen flex flex-col prose dark:prose-invert max-w-full"
+            >
+              {children}
+            </main>
+          </div>
         </SupabaseProvider>
+        <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
+          <p>Copyright © BeaverCoding {new Date().getFullYear()}</p>
+        </footer>
       </body>
     </html>
   );
