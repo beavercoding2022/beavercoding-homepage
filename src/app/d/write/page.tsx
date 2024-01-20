@@ -2,19 +2,20 @@ import { ForwardRefEditor } from '@/src/components/ui/Editor/ForwardedEditor';
 import React from 'react';
 
 const markdown = `
-* Item 1
-* Item 2
-* Item 3
-  * nested item
+# Edit Here!
 
-1. Item 1
-2. Item 2
+1. Edit here
+
+2. Edit here
+
+3. Edit here
 `;
 
-export default function WriteBlogPost() {
+export default function WriteDoc() {
   return (
     <div>
-      <h1>Write Blog Post</h1>
+      <h1>Write Doc</h1>
+      <p>Write Doc</p>
       <React.Suspense fallback={null}>
         <ForwardRefEditor markdown={markdown} />
       </React.Suspense>

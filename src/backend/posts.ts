@@ -1,11 +1,5 @@
+import { createServerSupabaseClient } from '@/src/backend/instance';
 import { Database } from '@/src/types_db';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { cache } from 'react';
-
-export const createServerSupabaseClient = cache(() =>
-  createServerComponentClient<Database>({ cookies }),
-);
 
 export async function getPosts() {
   const supabase = createServerSupabaseClient();
@@ -18,16 +12,18 @@ export async function getPosts() {
 
 export async function getPost(
   slug: Database['public']['Tables']['posts']['Row']['slug'],
+  postingType: NonNullable<
+    Database['public']['Tables']['posts']['Row']['posting_type']
+  >,
 ) {
   const supabase = createServerSupabaseClient();
   const { data, error } = await supabase
     .from('posts')
     .select('*')
     .eq('slug', slug)
+    .eq('posting_type', postingType)
     .single();
-  if (error) {
-    throw error;
-  }
+
   return data;
 }
 
@@ -37,12 +33,7 @@ export async function getPostSectionsBySlug(
   const supabase = createServerSupabaseClient();
   const { data, error } = await supabase
     .from('post_sections')
-    .select(
-      `
-  *,
-  posts ( id, slug )
-`,
-    )
+    .select(`*,posts ( id, slug )`)
     .eq('posts.slug', slug);
   if (error) {
     throw error;

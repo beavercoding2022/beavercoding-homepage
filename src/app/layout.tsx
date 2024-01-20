@@ -1,7 +1,8 @@
-import { GeistSans } from 'geist/font/sans';
-import './globals.css';
 import SupabaseProvider from '@/src/app/supabase-provider';
 import Navbar from '@/src/components/Navbar';
+import { GeistSans } from 'geist/font/sans';
+import './globals.css';
+import '@mdxeditor/editor/dist/styles/ui.module.css';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -24,7 +25,7 @@ export default function RootLayout({
       <body className="bg-background text-foreground">
         <SupabaseProvider>
           <Navbar />
-          <div className="max-w-6xl px-6 mx-auto">
+          <div className="max-w-6xl p-6 mx-auto">
             <main
               id="skip"
               className="min-h-screen flex flex-col prose dark:prose-invert max-w-full"

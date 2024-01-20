@@ -175,17 +175,17 @@ export interface Database {
         Row: {
           id: number
           post_id: number
-          tag: string
+          tag_id: number
         }
         Insert: {
           id?: never
           post_id: number
-          tag: string
+          tag_id: number
         }
         Update: {
           id?: never
           post_id?: number
-          tag?: string
+          tag_id?: number
         }
         Relationships: [
           {
@@ -194,11 +194,19 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
           }
         ]
       }
       posts: {
         Row: {
+          category_id: number | null
           created_at: string
           id: number
           posting_type: Database["public"]["Enums"]["posting_type"] | null
@@ -209,6 +217,7 @@ export interface Database {
           user_id: string
         }
         Insert: {
+          category_id?: number | null
           created_at?: string
           id?: never
           posting_type?: Database["public"]["Enums"]["posting_type"] | null
@@ -219,6 +228,7 @@ export interface Database {
           user_id: string
         }
         Update: {
+          category_id?: number | null
           created_at?: string
           id?: never
           posting_type?: Database["public"]["Enums"]["posting_type"] | null
@@ -229,6 +239,13 @@ export interface Database {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "post_categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "posts_team_id_fkey"
             columns: ["team_id"]
@@ -390,6 +407,24 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      tags: {
+        Row: {
+          created_at: string
+          id: number
+          tag: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          tag: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          tag?: string
+        }
+        Relationships: []
       }
       teams: {
         Row: {
