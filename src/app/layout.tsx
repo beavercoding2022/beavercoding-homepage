@@ -28,15 +28,15 @@ export default function RootLayout({
           <div className="max-w-6xl p-6 mx-auto">
             <main
               id="skip"
-              className="min-h-screen flex flex-col prose dark:prose-invert max-w-full"
+              className="flex flex-col prose dark:prose-invert max-w-full"
             >
               {children}
             </main>
+            <footer className="w-full border-t border-t-foreground/10 p-4 flex justify-center text-center text-xs">
+              <p>Copyright © BeaverCoding {new Date().getFullYear()}</p>
+            </footer>
           </div>
         </SupabaseProvider>
-        <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
-          <p>Copyright © BeaverCoding {new Date().getFullYear()}</p>
-        </footer>
       </body>
     </html>
   );
