@@ -2,20 +2,15 @@
 
 import {
   AdmonitionDirectiveDescriptor,
-  BoldItalicUnderlineToggles,
-  CodeToggle,
   KitchenSinkToolbar,
   MDXEditor,
   MDXEditorMethods,
-  MDXEditorProps,
-  UndoRedo,
   codeBlockPlugin,
   codeMirrorPlugin,
   diffSourcePlugin,
   directivesPlugin,
   frontmatterPlugin,
   headingsPlugin,
-  imagePlugin,
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
@@ -26,6 +21,8 @@ import {
   toolbarPlugin,
 } from '@mdxeditor/editor';
 import React from 'react';
+import styles from './Editor.module.css';
+
 interface EditorProps {
   markdown: string;
   editorRef: React.Ref<MDXEditorMethods>;
@@ -40,19 +37,16 @@ export default function Editor({
   editorRef,
 }: React.PropsWithChildren<EditorProps>) {
   return (
-    <div className="w-full h-[80vh] max-h-80vh mt-2">
+    <div className="w-full h-[80vh] max-h-80vh mt-2 dark:border-2 flex flex-1 flex-row">
       <MDXEditor
         ref={editorRef}
         markdown={markdown}
-        contentEditableClassName="prose dark:prose-invert"
+        className="prose dark:prose-invert dark-theme dark-editor flex-1 min-w-full"
         plugins={[
           toolbarPlugin({
             toolbarContents: () => (
-              <div className="flex flex-row">
-                {' '}
-                <UndoRedo />
-                <BoldItalicUnderlineToggles />
-                <CodeToggle />
+              <div className={['flex', 'flex-row', styles.childWrap].join(' ')}>
+                <KitchenSinkToolbar />
               </div>
             ),
           }),

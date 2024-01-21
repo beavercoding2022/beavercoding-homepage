@@ -1,0 +1,3 @@
+.childWrap > * {
+  flex-wrap: wrap;
+}

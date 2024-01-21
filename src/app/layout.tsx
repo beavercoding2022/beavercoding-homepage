@@ -2,7 +2,7 @@ import SupabaseProvider from '@/src/app/supabase-provider';
 import Navbar from '@/src/components/Navbar';
 import { GeistSans } from 'geist/font/sans';
 import './globals.css';
-import '@mdxeditor/editor/dist/styles/ui.module.css';
+import '@mdxeditor/editor/style.css';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
