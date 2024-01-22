@@ -8,6 +8,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 type SupabaseContext = {
   supabase: SupabaseClient<Database>;
+  isSignedIn: boolean;
 };
 
 const Context = createContext<SupabaseContext | undefined>(undefined);
@@ -18,6 +19,7 @@ export default function SupabaseProvider({
   children: React.ReactNode;
 }) {
   const [supabase] = useState(() => createPagesBrowserClient());
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,7 +27,11 @@ export default function SupabaseProvider({
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
-        console.log(event);
+        setIsSignedIn(true);
+      }
+
+      if (event === 'SIGNED_OUT') {
+        setIsSignedIn(false);
       }
     });
 
@@ -35,7 +41,7 @@ export default function SupabaseProvider({
   }, [router, supabase]);
 
   return (
-    <Context.Provider value={{ supabase }}>
+    <Context.Provider value={{ supabase, isSignedIn }}>
       <>{children}</>
     </Context.Provider>
   );

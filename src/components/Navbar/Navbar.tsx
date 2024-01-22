@@ -13,7 +13,7 @@ export default async function Navbar() {
       <a href="#skip" className="sr-only focus:not-sr-only">
         Skip to content
       </a>
-      <div className="max-w-6xl px-6 mx-auto bg-slate-100 dark:bg-slate-700">
+      <div className="max-w-6xl px-6 mx-auto bg-primary dark:bg-primary-dark">
         <div className="relative flex flex-row justify-between py-4 align-center md:py-6">
           <div className="flex items-center flex-1">
             <nav className="ml-6 space-x-2">
