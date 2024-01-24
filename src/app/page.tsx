@@ -1,7 +1,7 @@
 export default async function Index() {
   return (
     <header className="flex-1 flex flex-col gap-6">
-      <div className="flex flex-col gap-16 items-center">
+      <div className="flex flex-col gap-16 items-center animate-in">
         <h1 className="sr-only">비버코딩 홈페이지</h1>
         <p className="text-3xl lg:text-4xl !leading-tight mx-auto text-center break-keep">
           비버코딩은 비즈니스를 위한 <br /> 가장{' '}

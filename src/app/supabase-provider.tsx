@@ -19,6 +19,7 @@ export default function SupabaseProvider({
   children: React.ReactNode;
 }) {
   const [supabase] = useState(() => createPagesBrowserClient());
+
   const [isSignedIn, setIsSignedIn] = useState(false);
   const router = useRouter();
 

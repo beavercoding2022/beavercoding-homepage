@@ -10,7 +10,10 @@ export default async function BlogIndexPage() {
       {session && <CustomLink href={'/b/write'}>Write Blog</CustomLink>}
       {posts.map((post) => (
         <div key={post.id}>
-          <CustomLink href={`/b/${post.slug}`}>{post.title}</CustomLink>
+          <p>
+            id: {post.id}
+            <CustomLink href={`/b/${post.slug}`}>{post.title}</CustomLink>
+          </p>
         </div>
       ))}
     </div>

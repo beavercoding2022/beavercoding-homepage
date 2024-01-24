@@ -4,6 +4,7 @@ import {
   AdmonitionDirectiveDescriptor,
   BoldItalicUnderlineToggles,
   ChangeCodeMirrorLanguage,
+  CodeBlockEditorDescriptor,
   CodeToggle,
   ConditionalContents,
   CreateLink,
@@ -34,6 +35,7 @@ import {
   tablePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
+  useCodeBlockEditorContext,
 } from '@mdxeditor/editor';
 import React from 'react';
 import styles from './Editor.module.css';
@@ -43,6 +45,29 @@ export type EditorProps = MDXEditorProps & {
   editorRef: React.Ref<MDXEditorMethods>;
   handleUpload?: (image: File) => Promise<string>;
   imageAutocompleteSuggestions?: string[];
+};
+
+const PlainTextCodeEditorDescriptor: CodeBlockEditorDescriptor = {
+  // always use the editor, no matter the language or the meta of the code block
+  match: (language, meta) => true,
+  // You can have multiple editors with different priorities, so that there's a "catch-all" editor (with the lowest priority)
+  priority: 0,
+  // The Editor is a React component
+  Editor: (props) => {
+    const cb = useCodeBlockEditorContext();
+    // stops the proppagation so that the parent lexical editor does not handle certain events.
+    return (
+      <div onKeyDown={(e) => e.nativeEvent.stopImmediatePropagation()}>
+        <textarea
+          rows={3}
+          cols={20}
+          className="w-full m-2 dark:bg-slate-800"
+          defaultValue={props.code}
+          onChange={(e) => cb.setCode(e.target.value)}
+        />
+      </div>
+    );
+  },
 };
 
 /**
@@ -70,8 +95,9 @@ export default function Editor({
             'flex-1',
             'min-w-full',
             'overflow-y-scroll',
+            'dark:bg-background',
           ].join(' ')}
-          contentEditableClassName="prose dark:prose min-w-full"
+          contentEditableClassName="prose dark:prose-invert min-w-full min-h-full"
           plugins={[
             imagePlugin({
               imageAutocompleteSuggestions,
@@ -125,7 +151,10 @@ export default function Editor({
             tablePlugin(),
             thematicBreakPlugin(),
             frontmatterPlugin(),
-            codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
+            codeBlockPlugin({
+              defaultCodeBlockLanguage: 'txt',
+              codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor],
+            }),
             codeMirrorPlugin({
               codeBlockLanguages: {
                 js: 'JavaScript',

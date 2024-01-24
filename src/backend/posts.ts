@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/src/backend/instance';
 import { Database } from '@/src/types_db';
+import { QueryData } from '@supabase/supabase-js';
 
 export async function getPosts() {
   const supabase = createServerSupabaseClient();
@@ -31,10 +32,13 @@ export async function getPostSectionsBySlug(
   slug: Database['public']['Tables']['posts']['Row']['slug'],
 ) {
   const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase
+  const getDataQuery = supabase
     .from('post_sections')
-    .select(`*,posts ( id, slug )`)
+    .select(`*, posts!inner(*)`)
     .eq('posts.slug', slug);
+
+  const { data, error } = await getDataQuery;
+
   if (error) {
     throw error;
   }

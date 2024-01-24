@@ -18,13 +18,18 @@ export default async function BlogPost({
   }
 
   return (
-    <>
-      <h1>{post.title}</h1>
+    <div className="p-2">
       <CustomLink href="/b">Back to Blog</CustomLink>
-      <p>/b/{post.slug}</p>
-      <pre>{JSON.stringify(post, null, 2)}</pre>
-      <MDXRemote source={postSections[0].content} />
-      <pre>{JSON.stringify(postSections, null, 2)}</pre>
-    </>
+      <CustomLink href={`/b/${post.slug}`}>/b/{post.slug}</CustomLink>
+      <h1>{post.title}</h1>
+      {postSections.map((section) => (
+        <div
+          key={`${section.posts?.id || 'post'}_${section.id}`}
+          className="border my-2 p-2"
+        >
+          <MDXRemote source={section.content} />
+        </div>
+      ))}
+    </div>
   );
 }

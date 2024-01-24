@@ -37,6 +37,7 @@ export default function RootLayout({
             </footer>
           </div>
         </SupabaseProvider>
+        <div id="modal-root" />
       </body>
     </html>
   );

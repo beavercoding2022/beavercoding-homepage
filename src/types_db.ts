@@ -134,6 +134,7 @@ export interface Database {
       }
       post_sections: {
         Row: {
+          category_id: number | null
           content: string
           id: number
           post_id: number
@@ -141,13 +142,15 @@ export interface Database {
           user_id: string
         }
         Insert: {
+          category_id?: number | null
           content: string
           id?: never
           post_id: number
           section_order?: number
-          user_id: string
+          user_id?: string
         }
         Update: {
+          category_id?: number | null
           content?: string
           id?: never
           post_id?: number
@@ -155,6 +158,13 @@ export interface Database {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "post_sections_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "post_categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "post_sections_post_id_fkey"
             columns: ["post_id"]
@@ -225,7 +235,7 @@ export interface Database {
           slug: string
           team_id?: number | null
           title: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           category_id?: number | null
@@ -258,6 +268,42 @@ export interface Database {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      postsecion_tags: {
+        Row: {
+          created_at: string
+          id: number
+          post_section_id: number
+          tag_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          post_section_id: number
+          tag_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          post_section_id?: number
+          tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "postsecion_tags_post_section_id_fkey"
+            columns: ["post_section_id"]
+            isOneToOne: false
+            referencedRelation: "post_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "postsecion_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
             referencedColumns: ["id"]
           }
         ]
