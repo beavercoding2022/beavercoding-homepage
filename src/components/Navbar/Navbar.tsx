@@ -9,12 +9,12 @@ export default async function Navbar() {
   } = await supabase.auth.getUser();
 
   return (
-    <nav className={' top-0 z-40 transition-all duration-150 h-16 md:h-20'}>
+    <nav className="top-0 z-40 transition-all duration-150 h-16">
       <a href="#skip" className="sr-only focus:not-sr-only">
         Skip to content
       </a>
-      <div className="max-w-6xl px-6 mx-auto bg-primary dark:bg-primary-dark">
-        <div className="relative flex flex-row justify-between py-4 align-center md:py-6">
+      <div className="hidden sm:block max-w-screen-lg px-6 mx-auto bg-primary dark:bg-primary-dark">
+        <div className="relative flex flex-row justify-between py-4 align-center">
           <div className="flex items-center flex-1">
             <nav className="ml-6 space-x-2">
               <CustomLink href="/">Home</CustomLink>
@@ -22,12 +22,14 @@ export default async function Navbar() {
               <CustomLink href="/portfolio">Portfolio</CustomLink>
               <CustomLink href="/b">Blog</CustomLink>
               <CustomLink href="/d">Docs</CustomLink>
-              {user && <CustomLink href="/account">Account</CustomLink>}
             </nav>
           </div>
-          <div className="flex justify-end flex-1 space-x-8">
+          <div className="flex justify-end space-x-8">
             {user ? (
-              <SignOutButton />
+              <>
+                <CustomLink href="/account">Account</CustomLink>
+                <SignOutButton />
+              </>
             ) : (
               <CustomLink href="/sign-in">Sign in</CustomLink>
             )}

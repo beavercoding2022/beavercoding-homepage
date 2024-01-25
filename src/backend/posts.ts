@@ -1,10 +1,22 @@
 import { createServerSupabaseClient } from '@/src/backend/instance';
 import { Database } from '@/src/types_db';
-import { QueryData } from '@supabase/supabase-js';
 
-export async function getPosts() {
+export async function getPosts(
+  type: NonNullable<
+    Database['public']['Tables']['posts']['Row']['posting_type']
+  >,
+  { page, pageSize }: { page: number; pageSize: number } = {
+    page: 1,
+    pageSize: 10,
+  },
+) {
   const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase.from('posts').select('*');
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('posting_type', type)
+    .order('created_at', { ascending: false })
+    .range((page - 1) * pageSize, page * pageSize - 1);
   if (error) {
     throw error;
   }

@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className="bg-background text-foreground">
         <SupabaseProvider>
           <Navbar />
-          <div className="max-w-6xl p-6 mx-auto">
+          <div className="max-w-screen-lg p-6 mx-auto">
             <main
               id="skip"
               className="flex flex-col prose dark:prose-invert max-w-full"
