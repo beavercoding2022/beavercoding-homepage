@@ -9,7 +9,7 @@ export default async function Navbar() {
   } = await supabase.auth.getUser();
 
   return (
-    <nav className="top-0 z-40 transition-all duration-150 h-16">
+    <nav className="top-0 z-40 transition-all duration-150">
       <a href="#skip" className="sr-only focus:not-sr-only">
         Skip to content
       </a>
@@ -35,6 +35,13 @@ export default async function Navbar() {
             )}
           </div>
         </div>
+      </div>
+      <div className="sm:hidden flex flex-row bg-primary dark:bg-primary-dark">
+        <CustomLink href="/">Home</CustomLink>
+        <CustomLink href="/about">About</CustomLink>
+        <CustomLink href="/portfolio">Portfolio</CustomLink>
+        <CustomLink href="/b">Blog</CustomLink>
+        <CustomLink href="/d">Docs</CustomLink>
       </div>
     </nav>
   );
