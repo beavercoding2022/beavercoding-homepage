@@ -11,7 +11,7 @@ import { MDXEditorMethods } from '@mdxeditor/editor';
 import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export type WriterProps = {
   postingType: Database['public']['Tables']['posts']['Row']['posting_type'];
@@ -27,6 +27,7 @@ const initialMarkdown = `* Hello World`;
 export default function Writer({
   postingType,
 }: React.PropsWithChildren<WriterProps>) {
+  const { push } = useRouter();
   const [supabase] = React.useState(() => createPagesBrowserClient());
   const editorRef = React.useRef<MDXEditorMethods>(null);
   const [title, setTitle] = React.useState<string>('blog post title');
@@ -153,7 +154,7 @@ export default function Writer({
         throw { ...postSectionsError, cause: 'insert post_sections' };
       }
 
-      redirect(`/posts/${slug}`);
+      push(`/posts/${slug}`);
     } catch (error) {
       console.log(error);
       setModal({
@@ -161,7 +162,14 @@ export default function Writer({
         message: (error as Error)?.message,
       });
     }
-  }, [postingType, slug, supabase, title, writingSection.markdownSections]);
+  }, [
+    postingType,
+    push,
+    slug,
+    supabase,
+    title,
+    writingSection.markdownSections,
+  ]);
 
   return (
     <>

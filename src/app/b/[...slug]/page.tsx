@@ -8,9 +8,12 @@ export default async function BlogPost({
 }: {
   params: { slug: string[] };
 }) {
+  // 한글 지원
+  const lastSlug = decodeURIComponent(params.slug[params.slug.length - 1]);
+
   const [post, postSections] = await Promise.all([
-    getPost(params.slug[params.slug.length - 1], 'blog'),
-    getPostSectionsBySlug(params.slug[params.slug.length - 1]),
+    getPost(lastSlug, 'blog'),
+    getPostSectionsBySlug(lastSlug),
   ]);
 
   if (!post) {
