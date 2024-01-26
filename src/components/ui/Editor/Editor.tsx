@@ -104,9 +104,7 @@ export default function Editor({
             }),
             toolbarPlugin({
               toolbarContents: () => (
-                <div
-                  className={['flex', 'flex-row', styles.childWrap].join(' ')}
-                >
+                <div className={'flex flex-row [&>*]:flex-wrap'}>
                   <DiffSourceToggleWrapper>
                     <ConditionalContents
                       options={[
