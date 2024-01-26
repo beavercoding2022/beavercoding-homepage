@@ -1,7 +1,6 @@
 import SupabaseProvider from '@/src/app/supabase-provider';
 import Navbar from '@/src/components/Navbar';
 import '@mdxeditor/editor/style.css';
-import { GeistSans } from 'geist/font/sans';
 import './globals.css';
 import { ThemeProvider } from '@/src/app/theme-provider';
 
@@ -22,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body className="text-foreground">
         <ThemeProvider defaultTheme="dark" disableTransitionOnChange>
           <SupabaseProvider>
@@ -38,7 +37,6 @@ export default function RootLayout({
                 <p>Copyright © BeaverCoding {new Date().getFullYear()}</p>
               </footer>
             </div>
-            <div id="modal-root" />
           </SupabaseProvider>
         </ThemeProvider>
       </body>

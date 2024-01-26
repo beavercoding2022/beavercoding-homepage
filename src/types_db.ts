@@ -34,6 +34,63 @@ export interface Database {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      category_relations: {
+        Row: {
+          child_category_id: number | null
+          created_at: string
+          id: number
+          parent_category_id: number | null
+        }
+        Insert: {
+          child_category_id?: number | null
+          created_at?: string
+          id?: number
+          parent_category_id?: number | null
+        }
+        Update: {
+          child_category_id?: number | null
+          created_at?: string
+          id?: number
+          parent_category_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "category_relations_child_category_id_fkey"
+            columns: ["child_category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "category_relations_parent_category_id_fkey"
+            columns: ["parent_category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       customers: {
         Row: {
           id: string
@@ -59,27 +116,31 @@ export interface Database {
       }
       post_categories: {
         Row: {
+          category_id: number | null
           created_at: string
           id: number
-          name: string
-          post_id: number
-          slug: string
+          post_id: number | null
         }
         Insert: {
+          category_id?: number | null
           created_at?: string
-          id?: never
-          name: string
-          post_id: number
-          slug: string
+          id?: number
+          post_id?: number | null
         }
         Update: {
+          category_id?: number | null
           created_at?: string
-          id?: never
-          name?: string
-          post_id?: number
-          slug?: string
+          id?: number
+          post_id?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "post_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "post_categories_post_id_fkey"
             columns: ["post_id"]
@@ -138,6 +199,42 @@ export interface Database {
           }
         ]
       }
+      post_section_categories: {
+        Row: {
+          category_id: number | null
+          created_at: string
+          id: number
+          post_section_id: number | null
+        }
+        Insert: {
+          category_id?: number | null
+          created_at?: string
+          id?: number
+          post_section_id?: number | null
+        }
+        Update: {
+          category_id?: number | null
+          created_at?: string
+          id?: number
+          post_section_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_section_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_section_categories_post_section_id_fkey"
+            columns: ["post_section_id"]
+            isOneToOne: false
+            referencedRelation: "post_sections"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       post_section_references: {
         Row: {
           created_at: string
@@ -161,7 +258,6 @@ export interface Database {
       }
       post_sections: {
         Row: {
-          category_id: number | null
           content: string
           external_reference_url: string | null
           id: number
@@ -170,7 +266,6 @@ export interface Database {
           user_id: string
         }
         Insert: {
-          category_id?: number | null
           content: string
           external_reference_url?: string | null
           id?: never
@@ -179,7 +274,6 @@ export interface Database {
           user_id?: string
         }
         Update: {
-          category_id?: number | null
           content?: string
           external_reference_url?: string | null
           id?: never
@@ -188,13 +282,6 @@ export interface Database {
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "post_sections_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "post_categories"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "post_sections_post_id_fkey"
             columns: ["post_id"]
@@ -286,7 +373,7 @@ export interface Database {
             foreignKeyName: "posts_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
-            referencedRelation: "post_categories"
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
           {

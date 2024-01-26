@@ -10,19 +10,39 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import CategorySelector from '@/src/components/Writer/CategorySelector';
 import Section from '@/src/components/Writer/Section';
 import { ForwardRefEditor } from '@/src/components/ui/Editor/ForwardedEditor';
 import { Database } from '@/src/types_db';
 import sluggify from '@/src/utils/sluggify';
 import { MDXEditorMethods } from '@mdxeditor/editor';
-import { Label } from '@radix-ui/react-label';
+
 import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
+type PostingType = NonNullable<
+  Database['public']['Tables']['posts']['Row']['posting_type']
+>;
+const PATH_MAPPER: Record<PostingType, 'b' | 'portfolio' | 'd'> = {
+  blog: 'b',
+  portfolio: 'portfolio',
+  docs: 'd',
+};
+
+type Category = Database['public']['Tables']['categories']['Row'];
+
+export type CategoryState = {
+  inputCategory: string;
+  hasToBeCreated: boolean;
+  searchedCategories: Category[];
+  selectedCategories: Category[];
+};
+
 export type WriterProps = {
-  postingType: Database['public']['Tables']['posts']['Row']['posting_type'];
+  postingType: PostingType;
 };
 
 const initialModalstate: { isOpen: boolean; message: string } = {
@@ -32,13 +52,23 @@ const initialModalstate: { isOpen: boolean; message: string } = {
 
 const initialMarkdown = `* Hello World`;
 
+const initialCategoryState: CategoryState = {
+  inputCategory: '',
+  hasToBeCreated: false,
+  searchedCategories: [],
+  selectedCategories: [],
+};
+
 export default function Writer({
   postingType,
 }: React.PropsWithChildren<WriterProps>) {
   const { push } = useRouter();
-  const [supabase] = React.useState(() => createPagesBrowserClient());
+  const [supabase] = React.useState(() => createPagesBrowserClient<Database>());
   const editorRef = React.useRef<MDXEditorMethods>(null);
   const [title, setTitle] = React.useState<string>('');
+
+  const [category, setCategory] =
+    React.useState<CategoryState>(initialCategoryState);
   const [modal, setModal] = React.useState<{
     isOpen: boolean;
     message: string;
@@ -63,7 +93,7 @@ export default function Writer({
   const handleUpload = React.useCallback(
     async function (image: File): Promise<string> {
       const { data, error } = await supabase.storage
-        .from('imagesasdf')
+        .from('images')
         .upload(`${postingType}/${slug}/${image.name}`, image, {
           cacheControl: '3600',
           upsert: false,
@@ -154,6 +184,19 @@ export default function Writer({
         throw { ...postError, cause: 'select posts' };
       }
 
+      const { error: postCategoryError } = await supabase
+        .from('post_categories')
+        .insert(
+          category.selectedCategories.map((category) => ({
+            post_id: postData.id,
+            category_id: category.id,
+          })),
+        );
+
+      if (postCategoryError) {
+        throw { ...postCategoryError, cause: 'insert post_categories' };
+      }
+
       const postId = postData.id;
 
       const { error: postSectionsError } = await supabase
@@ -170,7 +213,34 @@ export default function Writer({
         throw { ...postSectionsError, cause: 'insert post_sections' };
       }
 
-      push(`/posts/${slug}`);
+      const { data: postSectionsData, error: postSectionsSelectError } =
+        await supabase.from('post_sections').select('id').eq('post_id', postId);
+
+      if (postSectionsSelectError) {
+        throw { ...postSectionsSelectError, cause: 'select post_sections' };
+      }
+
+      const { error: postSectionCategoryError } = await supabase
+        .from('post_section_categories')
+        .insert(
+          postSectionsData
+            .map((postSection) =>
+              category.selectedCategories.map((category) => ({
+                post_section_id: postSection.id,
+                category_id: category.id,
+              })),
+            )
+            .flat(),
+        );
+
+      if (postSectionCategoryError) {
+        throw {
+          ...postSectionCategoryError,
+          cause: 'insert post_section_categories',
+        };
+      }
+
+      push(`/${PATH_MAPPER[postingType]}/${slug}`);
     } catch (error) {
       console.log(error);
       setModal({
@@ -179,6 +249,7 @@ export default function Writer({
       });
     }
   }, [
+    category.selectedCategories,
     postingType,
     push,
     slug,
@@ -200,10 +271,7 @@ export default function Writer({
           />
         </div>
         <p>slug: {slug}</p>
-        <div className="w-full items-center gap-1.5">
-          <Label htmlFor="category">Category</Label>
-          <Input type="text" id="category" value={title} readOnly />
-        </div>
+        <CategorySelector state={category} setState={setCategory} />
         <div className="flex md:flex-row flex-col">
           <section className="flex flex-1 py-2 mr-1">
             <ForwardRefEditor
@@ -218,7 +286,18 @@ export default function Writer({
           </section>
           <section className="flex flex-1 flex-col py-2 ml-1">
             {writingSection.markdownSections.map((markdownSection, index) => (
-              <Section key={`index_${index}`} markdown={markdownSection} />
+              <Section
+                key={`index_${index}`}
+                markdown={markdownSection}
+                current={writingSection.currentIndex === index}
+                onClickEdit={() => {
+                  setWritingSection((prev) => ({
+                    ...prev,
+                    currentIndex: index,
+                  }));
+                  editorRef.current?.setMarkdown(markdownSection);
+                }}
+              />
             ))}
             <Button variant={'outline'} onClick={onClickPlus}>
               +
