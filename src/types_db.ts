@@ -59,19 +59,25 @@ export interface Database {
       }
       post_categories: {
         Row: {
+          created_at: string
           id: number
           name: string
           post_id: number
+          slug: string
         }
         Insert: {
+          created_at?: string
           id?: never
           name: string
           post_id: number
+          slug: string
         }
         Update: {
+          created_at?: string
           id?: never
           name?: string
           post_id?: number
+          slug?: string
         }
         Relationships: [
           {
@@ -86,26 +92,26 @@ export interface Database {
       post_comments: {
         Row: {
           content: string
+          external_reference_url: string | null
           id: number
           parent_comment_id: number | null
           post_id: number
-          section_order: number
           user_id: string
         }
         Insert: {
           content: string
+          external_reference_url?: string | null
           id?: never
           parent_comment_id?: number | null
           post_id: number
-          section_order?: number
           user_id: string
         }
         Update: {
           content?: string
+          external_reference_url?: string | null
           id?: never
           parent_comment_id?: number | null
           post_id?: number
-          section_order?: number
           user_id?: string
         }
         Relationships: [
@@ -132,10 +138,32 @@ export interface Database {
           }
         ]
       }
+      post_section_references: {
+        Row: {
+          created_at: string
+          destination_post_section_id: number | null
+          id: number
+          source_post_section_id: number | null
+        }
+        Insert: {
+          created_at?: string
+          destination_post_section_id?: number | null
+          id?: number
+          source_post_section_id?: number | null
+        }
+        Update: {
+          created_at?: string
+          destination_post_section_id?: number | null
+          id?: number
+          source_post_section_id?: number | null
+        }
+        Relationships: []
+      }
       post_sections: {
         Row: {
           category_id: number | null
           content: string
+          external_reference_url: string | null
           id: number
           post_id: number
           section_order: number
@@ -144,6 +172,7 @@ export interface Database {
         Insert: {
           category_id?: number | null
           content: string
+          external_reference_url?: string | null
           id?: never
           post_id: number
           section_order?: number
@@ -152,6 +181,7 @@ export interface Database {
         Update: {
           category_id?: number | null
           content?: string
+          external_reference_url?: string | null
           id?: never
           post_id?: number
           section_order?: number
@@ -223,6 +253,7 @@ export interface Database {
           public: boolean
           slug: string
           team_id: number | null
+          thumbnail_url: string | null
           title: string
           user_id: string
         }
@@ -234,6 +265,7 @@ export interface Database {
           public: boolean
           slug: string
           team_id?: number | null
+          thumbnail_url?: string | null
           title: string
           user_id?: string
         }
@@ -245,6 +277,7 @@ export interface Database {
           public?: boolean
           slug?: string
           team_id?: number | null
+          thumbnail_url?: string | null
           title?: string
           user_id?: string
         }
@@ -458,17 +491,20 @@ export interface Database {
         Row: {
           created_at: string
           id: number
-          tag: string
+          name: string
+          slug: string
         }
         Insert: {
           created_at?: string
           id?: number
-          tag: string
+          name: string
+          slug: string
         }
         Update: {
           created_at?: string
           id?: number
-          tag?: string
+          name?: string
+          slug?: string
         }
         Relationships: []
       }
@@ -476,14 +512,17 @@ export interface Database {
         Row: {
           id: number
           name: string
+          slug: string
         }
         Insert: {
           id?: never
           name: string
+          slug: string
         }
         Update: {
           id?: never
           name?: string
+          slug?: string
         }
         Relationships: []
       }

@@ -1,17 +1,25 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import Section from '@/src/components/Writer/Section';
-import Button from '@/src/components/ui/Button';
 import { ForwardRefEditor } from '@/src/components/ui/Editor/ForwardedEditor';
-import Input from '@/src/components/ui/Input';
-import Modal from '@/src/components/ui/Modal';
 import { Database } from '@/src/types_db';
 import sluggify from '@/src/utils/sluggify';
 import { MDXEditorMethods } from '@mdxeditor/editor';
+import { Label } from '@radix-ui/react-label';
 import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useRouter } from 'next/navigation';
 
 export type WriterProps = {
   postingType: Database['public']['Tables']['posts']['Row']['posting_type'];
@@ -30,7 +38,7 @@ export default function Writer({
   const { push } = useRouter();
   const [supabase] = React.useState(() => createPagesBrowserClient());
   const editorRef = React.useRef<MDXEditorMethods>(null);
-  const [title, setTitle] = React.useState<string>('blog post title');
+  const [title, setTitle] = React.useState<string>('');
   const [modal, setModal] = React.useState<{
     isOpen: boolean;
     message: string;
@@ -55,7 +63,7 @@ export default function Writer({
   const handleUpload = React.useCallback(
     async function (image: File): Promise<string> {
       const { data, error } = await supabase.storage
-        .from('images')
+        .from('imagesasdf')
         .upload(`${postingType}/${slug}/${image.name}`, image, {
           cacheControl: '3600',
           upsert: false,
@@ -92,7 +100,7 @@ export default function Writer({
   }, []);
 
   const handleCloseModal = React.useCallback(
-    () => setModal((prev) => ({ ...prev, isOpen: false })),
+    (open = false) => setModal((prev) => ({ ...prev, isOpen: open })),
     [],
   );
 
@@ -112,6 +120,14 @@ export default function Writer({
   }, []);
 
   const onClickSave = React.useCallback(async () => {
+    if (title === '') {
+      setModal({
+        isOpen: true,
+        message: 'The title is empty',
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('posts')
@@ -140,7 +156,7 @@ export default function Writer({
 
       const postId = postData.id;
 
-      const { data: result, error: postSectionsError } = await supabase
+      const { error: postSectionsError } = await supabase
         .from('post_sections')
         .insert<Database['public']['Tables']['post_sections']['Insert']>(
           writingSection.markdownSections.map((markdownSection, index) => ({
@@ -173,15 +189,23 @@ export default function Writer({
 
   return (
     <>
-      <div>
-        <Input
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-        />
+      <div className="my-2">
+        <div className="w-full items-center gap-1.5">
+          <Label htmlFor="title">Title</Label>
+          <Input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+          />
+        </div>
         <p>slug: {slug}</p>
+        <div className="w-full items-center gap-1.5">
+          <Label htmlFor="category">Category</Label>
+          <Input type="text" id="category" value={title} readOnly />
+        </div>
         <div className="flex md:flex-row flex-col">
-          <section className="flex flex-1 p-2">
+          <section className="flex flex-1 py-2 mr-1">
             <ForwardRefEditor
               ref={editorRef}
               markdown={
@@ -192,28 +216,40 @@ export default function Writer({
               imageAutocompleteSuggestions={imagePaths}
             />
           </section>
-          <section className="flex flex-1 flex-col p-2">
+          <section className="flex flex-1 flex-col py-2 ml-1">
             {writingSection.markdownSections.map((markdownSection, index) => (
               <Section key={`index_${index}`} markdown={markdownSection} />
             ))}
-            <Button onClick={onClickPlus}>+</Button>
+            <Button variant={'outline'} onClick={onClickPlus}>
+              +
+            </Button>
           </section>
         </div>
-        <Button onClick={onClickSave}>Save Changes</Button>
+        <Button variant={'outline'} onClick={onClickSave}>
+          Save Changes
+        </Button>
       </div>
-      <Modal isOpen={modal.isOpen} onClickOutside={handleCloseModal}>
-        <div>Error has occurred: {modal.message}</div>
-        <div className="flex items-center">
-          <Button
-            onClick={(event) => {
-              event.stopPropagation();
-              handleCloseModal();
-            }}
-          >
-            Close
-          </Button>
-        </div>
-      </Modal>
+
+      <Dialog open={modal.isOpen} onOpenChange={handleCloseModal}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Error</DialogTitle>
+            <DialogDescription>Error Has occurred</DialogDescription>
+          </DialogHeader>
+          <p>{modal.message}</p>
+          <DialogFooter>
+            <Button
+              variant={'outline'}
+              onClick={(event) => {
+                event.stopPropagation();
+                handleCloseModal();
+              }}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

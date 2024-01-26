@@ -83,7 +83,7 @@ export default function Editor({
 }: React.PropsWithChildren<EditorProps>) {
   return (
     <>
-      <div className="w-full mt-2 border-2 dark:border-2 flex flex-1 flex-row h-[60vh]">
+      <div className="w-full mt-2 border-2 flex flex-1 flex-row h-[60vh]">
         <MDXEditor
           ref={editorRef}
           markdown={markdown}
@@ -95,7 +95,6 @@ export default function Editor({
             'flex-1',
             'min-w-full',
             'overflow-y-scroll',
-            'dark:bg-background',
           ].join(' ')}
           contentEditableClassName="prose dark:prose-invert min-w-full min-h-full"
           plugins={[

@@ -18,9 +18,7 @@ const ModalBody = (props: React.PropsWithChildren<ModalProps>) => {
         props?.onClickOutside?.();
       }}
     >
-      <div className="dark:bg-background bg-background p-4 rounded-xl animate-in">
-        {props.children}
-      </div>
+      <div className="p-4 rounded-xl animate-in">{props.children}</div>
     </div>
   );
 };

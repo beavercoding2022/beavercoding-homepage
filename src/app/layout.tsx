@@ -1,8 +1,9 @@
 import SupabaseProvider from '@/src/app/supabase-provider';
 import Navbar from '@/src/components/Navbar';
+import '@mdxeditor/editor/style.css';
 import { GeistSans } from 'geist/font/sans';
 import './globals.css';
-import '@mdxeditor/editor/style.css';
+import { ThemeProvider } from '@/src/app/theme-provider';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -21,23 +22,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={GeistSans.className}>
-      <body className="bg-background text-foreground">
-        <SupabaseProvider>
-          <Navbar />
-          <div className="max-w-screen-lg p-6 mx-auto">
-            <main
-              id="skip"
-              className="flex flex-col prose dark:prose-invert max-w-full"
-            >
-              {children}
-            </main>
-            <footer className="w-full border-t border-t-foreground/10 p-4 flex justify-center text-center text-xs">
-              <p>Copyright © BeaverCoding {new Date().getFullYear()}</p>
-            </footer>
-          </div>
-        </SupabaseProvider>
-        <div id="modal-root" />
+    <html lang="ko">
+      <body className="text-foreground">
+        <ThemeProvider defaultTheme="dark" disableTransitionOnChange>
+          <SupabaseProvider>
+            <Navbar />
+            <div className="max-w-screen-lg p-6 mx-auto">
+              <main
+                id="skip"
+                className="flex flex-col prose dark:prose-invert max-w-full"
+              >
+                {children}
+              </main>
+              <footer className="w-full border-t border-t-foreground/10 p-4 flex justify-center text-center text-xs">
+                <p>Copyright © BeaverCoding {new Date().getFullYear()}</p>
+              </footer>
+            </div>
+            <div id="modal-root" />
+          </SupabaseProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

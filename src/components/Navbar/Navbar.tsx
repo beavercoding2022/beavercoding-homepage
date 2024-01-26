@@ -13,10 +13,10 @@ export default async function Navbar() {
       <a href="#skip" className="sr-only focus:not-sr-only">
         Skip to content
       </a>
-      <div className="hidden sm:block max-w-screen-lg px-6 mx-auto bg-primary dark:bg-primary-dark">
+      <div className="hidden sm:block max-w-screen-lg px-6 mx-auto">
         <div className="relative flex flex-row justify-between py-4 align-center">
           <div className="flex items-center flex-1">
-            <nav className="ml-6 space-x-2">
+            <nav className="space-x-2">
               <CustomLink href="/">Home</CustomLink>
               <CustomLink href="/about">About</CustomLink>
               <CustomLink href="/portfolio">Portfolio</CustomLink>
@@ -36,7 +36,7 @@ export default async function Navbar() {
           </div>
         </div>
       </div>
-      <div className="sm:hidden flex flex-row bg-primary dark:bg-primary-dark">
+      <div className="sm:hidden flex flex-row">
         <CustomLink href="/">Home</CustomLink>
         <CustomLink href="/about">About</CustomLink>
         <CustomLink href="/portfolio">Portfolio</CustomLink>

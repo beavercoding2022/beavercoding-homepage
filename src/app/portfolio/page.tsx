@@ -1,6 +1,7 @@
 import { getSession } from '@/src/app/supabase-server';
 import { getPosts } from '@/src/backend/posts';
 import PortfolioList from '@/src/components/Posts/PortfolioList';
+import CategorySelector from '@/src/components/Writer/CategorySelector';
 import CustomLink from '@/src/components/ui/CustomLink';
 
 export default async function PortfolioPage() {
