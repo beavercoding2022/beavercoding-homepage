@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import CustomLink from '@/src/components/ui/CustomLink';
 import CopyText from '@/src/components/ui/CopyText';
+import React from 'react';
+import { headers } from 'next/headers';
 
 export default async function PortfolioPost({
   params,
@@ -21,15 +23,13 @@ export default async function PortfolioPost({
     notFound();
   }
 
+  const url = headers().get('referer');
+
   return (
     <div className="p-2">
       <CustomLink href="/b">Back to Portfolio</CustomLink>
       <p />
-      <CopyText
-        text={`${process.env.VERCEL_URL || 'https://beavercoding.net'}/portfolio/${post.slug}`}
-      >
-        /portfolio/{post.slug}
-      </CopyText>
+      <CopyText text={url || ''} />
       <h1>{post.title}</h1>
       {postSections.map((section) => (
         <div
