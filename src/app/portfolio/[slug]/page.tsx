@@ -1,12 +1,9 @@
+import SinglePortfolio from '@/src/app/portfolio/SinglePortfolio';
 import { getPost, getPostSectionsBySlug } from '@/src/backend/posts';
-import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import CustomLink from '@/src/components/ui/CustomLink';
-import CopyText from '@/src/components/ui/CopyText';
-import React from 'react';
-import { headers } from 'next/headers';
-import { NextRequest } from 'next/server';
 import CopyCurrentUrl from '@/src/components/ui/CopyCurrentUrl';
+import CustomLink from '@/src/components/ui/CustomLink';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import { notFound } from 'next/navigation';
 
 export default async function PortfolioPost({
   params,
@@ -30,15 +27,7 @@ export default async function PortfolioPost({
       <CustomLink href="/portfolio">Back to Portfolio</CustomLink>
       <p />
       <CopyCurrentUrl />
-      <h1>{post.title}</h1>
-      {postSections.map((section) => (
-        <div
-          key={`${section.posts?.id || 'post'}_${section.id}`}
-          className="border my-2 p-2"
-        >
-          <MDXRemote source={section.content} />
-        </div>
-      ))}
+      <SinglePortfolio post={post} postSections={postSections} />
     </div>
   );
 }
