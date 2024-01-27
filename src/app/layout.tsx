@@ -3,6 +3,7 @@ import Navbar from '@/src/components/Navbar';
 import '@mdxeditor/editor/style.css';
 import './globals.css';
 import { ThemeProvider } from '@/src/app/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -37,6 +38,7 @@ export default function RootLayout({
                 <p>Copyright © BeaverCoding {new Date().getFullYear()}</p>
               </footer>
             </div>
+            <Toaster />
           </SupabaseProvider>
         </ThemeProvider>
       </body>
