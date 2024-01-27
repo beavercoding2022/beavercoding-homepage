@@ -6,6 +6,7 @@ import CopyText from '@/src/components/ui/CopyText';
 import React from 'react';
 import { headers } from 'next/headers';
 import { NextRequest } from 'next/server';
+import CopyCurrentUrl from '@/src/components/ui/CopyCurrentUrl';
 
 export default async function PortfolioPost({
   params,
@@ -23,19 +24,12 @@ export default async function PortfolioPost({
   if (!post) {
     notFound();
   }
-  const referer = headers().get('referer');
-  const href = referer ? new NextRequest(referer).nextUrl.href : null;
-  const pathname = referer ? new NextRequest(referer).nextUrl.pathname : null;
-  const origin = referer ? new NextRequest(referer).nextUrl.origin : null;
 
   return (
     <div className="p-2">
       <CustomLink href="/portfolio">Back to Portfolio</CustomLink>
       <p />
-      {referer && <CopyText text={referer} />}
-      {href && <CopyText text={href} />}
-      {pathname && <CopyText text={pathname} />}
-      {origin && <CopyText text={origin} />}
+      <CopyCurrentUrl />
       <h1>{post.title}</h1>
       {postSections.map((section) => (
         <div
