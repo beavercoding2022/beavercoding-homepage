@@ -25,13 +25,18 @@ export default async function PortfolioPost({
   }
 
   const referer = headers().get('referer');
-  const url = referer ? new NextRequest(referer).nextUrl.href : null;
+  const href = referer ? new NextRequest(referer).nextUrl.href : null;
+  const pathname = referer ? new NextRequest(referer).nextUrl.pathname : null;
+  const origin = referer ? new NextRequest(referer).nextUrl.origin : null;
 
   return (
     <div className="p-2">
-      <CustomLink href="/b">Back to Portfolio</CustomLink>
+      <CustomLink href="/portfolio">Back to Portfolio</CustomLink>
       <p />
-      {url && <CopyText text={url} />}
+      {referer && <CopyText text={referer} />}
+      {href && <CopyText text={href} />}
+      {pathname && <CopyText text={pathname} />}
+      {origin && <CopyText text={origin} />}
       <h1>{post.title}</h1>
       {postSections.map((section) => (
         <div

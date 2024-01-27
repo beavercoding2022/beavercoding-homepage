@@ -18,7 +18,6 @@ export default function CopyText(props: PropsWithChildren<CopyTextProps>) {
         navigator.clipboard.writeText(props.text);
         toast({
           title: 'Text Copied on your clipboard!',
-          description: props.text,
         });
       }}
     >
