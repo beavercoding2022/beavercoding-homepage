@@ -23,13 +23,14 @@ export default async function PortfolioPost({
   if (!post) {
     notFound();
   }
-  const referer = headers().get('referer');
+  const referer = headers().get('Referer');
   const origin = referer ? new NextRequest(referer).nextUrl.origin : null;
 
   return (
     <div className="p-2">
       <CustomLink href="/portfolio">Back to Portfolio</CustomLink>
       <p />
+      <pre>{JSON.stringify(headers().entries())}</pre>
       {origin && <CopyText text={`${origin}/portfolio/${params.slug}`} />}
       <h1>{post.title}</h1>
       {postSections.map((section) => (
