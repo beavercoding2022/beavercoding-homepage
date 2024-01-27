@@ -5,6 +5,7 @@ import CustomLink from '@/src/components/ui/CustomLink';
 import CopyText from '@/src/components/ui/CopyText';
 import React from 'react';
 import { headers } from 'next/headers';
+import { NextRequest } from 'next/server';
 
 export default async function PortfolioPost({
   params,
@@ -23,13 +24,14 @@ export default async function PortfolioPost({
     notFound();
   }
 
-  const url = headers().get('referer');
+  const referer = headers().get('referer');
+  const url = referer ? new NextRequest(referer).nextUrl.href : null;
 
   return (
     <div className="p-2">
       <CustomLink href="/b">Back to Portfolio</CustomLink>
       <p />
-      <CopyText text={url || ''} />
+      {url && <CopyText text={url} />}
       <h1>{post.title}</h1>
       {postSections.map((section) => (
         <div
