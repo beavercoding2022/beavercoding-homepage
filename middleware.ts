@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/src/utils/supabase/middleware";
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/src/utils/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
   try {
@@ -33,6 +33,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
