@@ -32,10 +32,14 @@ export async function getPost(
   const supabase = createServerSupabaseClient();
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select('*, categories!post_categories (id, name, slug)')
     .eq('slug', slug)
     .eq('posting_type', postingType)
     .single();
+
+  if (error) {
+    throw error;
+  }
 
   return data;
 }
