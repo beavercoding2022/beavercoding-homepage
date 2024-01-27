@@ -57,22 +57,16 @@ export interface Database {
       }
       category_relations: {
         Row: {
-          child_category_id: number | null
-          created_at: string
-          id: number
-          parent_category_id: number | null
+          child_category_id: number
+          parent_category_id: number
         }
         Insert: {
-          child_category_id?: number | null
-          created_at?: string
-          id?: number
-          parent_category_id?: number | null
+          child_category_id: number
+          parent_category_id: number
         }
         Update: {
-          child_category_id?: number | null
-          created_at?: string
-          id?: number
-          parent_category_id?: number | null
+          child_category_id?: number
+          parent_category_id?: number
         }
         Relationships: [
           {
@@ -116,22 +110,16 @@ export interface Database {
       }
       post_categories: {
         Row: {
-          category_id: number | null
-          created_at: string
-          id: number
-          post_id: number | null
+          category_id: number
+          post_id: number
         }
         Insert: {
-          category_id?: number | null
-          created_at?: string
-          id?: number
-          post_id?: number | null
+          category_id: number
+          post_id: number
         }
         Update: {
-          category_id?: number | null
-          created_at?: string
-          id?: number
-          post_id?: number | null
+          category_id?: number
+          post_id?: number
         }
         Relationships: [
           {
@@ -199,24 +187,48 @@ export interface Database {
           }
         ]
       }
-      post_section_categories: {
+      post_secion_tags: {
         Row: {
-          category_id: number | null
-          created_at: string
-          id: number
-          post_section_id: number | null
+          post_section_id: number
+          tag_id: number
         }
         Insert: {
-          category_id?: number | null
-          created_at?: string
-          id?: number
-          post_section_id?: number | null
+          post_section_id: number
+          tag_id: number
         }
         Update: {
-          category_id?: number | null
-          created_at?: string
-          id?: number
-          post_section_id?: number | null
+          post_section_id?: number
+          tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_secion_tags_post_section_id_fkey"
+            columns: ["post_section_id"]
+            isOneToOne: false
+            referencedRelation: "post_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_secion_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      post_section_categories: {
+        Row: {
+          category_id: number
+          post_section_id: number
+        }
+        Insert: {
+          category_id: number
+          post_section_id: number
+        }
+        Update: {
+          category_id?: number
+          post_section_id?: number
         }
         Relationships: [
           {
@@ -237,22 +249,16 @@ export interface Database {
       }
       post_section_references: {
         Row: {
-          created_at: string
-          destination_post_section_id: number | null
-          id: number
-          source_post_section_id: number | null
+          destination_post_section_id: number
+          source_post_section_id: number
         }
         Insert: {
-          created_at?: string
-          destination_post_section_id?: number | null
-          id?: number
-          source_post_section_id?: number | null
+          destination_post_section_id: number
+          source_post_section_id: number
         }
         Update: {
-          created_at?: string
-          destination_post_section_id?: number | null
-          id?: number
-          source_post_section_id?: number | null
+          destination_post_section_id?: number
+          source_post_section_id?: number
         }
         Relationships: []
       }
@@ -388,42 +394,6 @@ export interface Database {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      postsecion_tags: {
-        Row: {
-          created_at: string
-          id: number
-          post_section_id: number
-          tag_id: number
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          post_section_id: number
-          tag_id: number
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          post_section_id?: number
-          tag_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "postsecion_tags_post_section_id_fkey"
-            columns: ["post_section_id"]
-            isOneToOne: false
-            referencedRelation: "post_sections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "postsecion_tags_tag_id_fkey"
-            columns: ["tag_id"]
-            isOneToOne: false
-            referencedRelation: "tags"
             referencedColumns: ["id"]
           }
         ]
