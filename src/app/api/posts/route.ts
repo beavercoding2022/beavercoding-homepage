@@ -11,8 +11,6 @@ export async function GET(request: NextRequest) {
     pageSize: searchParams.get('pageSize'),
   };
 
-  console.log(query);
-
   const postingType = (query['posting-type'] || 'blog') as NonNullable<
     Database['public']['Tables']['posts']['Row']['posting_type']
   >;
