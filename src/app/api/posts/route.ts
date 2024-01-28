@@ -1,28 +1,25 @@
 import { createServerSupabaseClient } from '@/src/app/supabase-server';
+import { getPosts } from '@/src/backend/posts';
 import { Database } from '@/src/types_db';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const query = {
+    'posting-type': searchParams.get('posting-type'),
+    page: searchParams.get('page'),
+    pageSize: searchParams.get('pageSize'),
+  };
 
-  const postingType = (searchParams.get('posting-type') ||
-    'blog') as NonNullable<
+  console.log(query);
+
+  const postingType = (query['posting-type'] || 'blog') as NonNullable<
     Database['public']['Tables']['posts']['Row']['posting_type']
   >;
-  const page = Number.parseInt(searchParams.get('page') || '0', 10);
+  const page = Number.parseInt(query.page || '0', 10);
+  const pageSize = Number.parseInt(query.pageSize || '0', 10);
 
-  const supabase = createServerSupabaseClient();
-
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('posting_type', postingType)
-    .order('created_at', { ascending: false })
-    .range(page * 10, page * 10 + 9);
-
-  if (error) {
-    throw error;
-  }
+  const data = await getPosts(postingType, { page, pageSize });
 
   return NextResponse.json({
     posts: data,

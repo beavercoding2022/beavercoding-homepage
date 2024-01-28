@@ -13,10 +13,15 @@ export async function getPosts(
   const supabase = createServerSupabaseClient();
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select(
+      `*, 
+      categories!post_categories (id, name, slug), 
+      post_sections!inner (id, content)
+      `,
+    )
     .eq('posting_type', type)
     .order('created_at', { ascending: false })
-    .range((page - 1) * pageSize, page * pageSize - 1);
+    .range(page * pageSize - pageSize, page * pageSize - 1);
   if (error) {
     throw error;
   }

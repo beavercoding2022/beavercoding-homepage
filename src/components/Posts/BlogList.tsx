@@ -33,7 +33,9 @@ export default function BlogList({
 
     try {
       fetching.current = true;
-      const response = await fetch(`/api/posts?page=${page}?posting-type=blog`);
+      const response = await fetch(
+        `/api/posts?page=${page}&pageSize=10&posting-type=blog`,
+      );
       const data = (await response.json()) as {
         posts: Post[];
       };
@@ -59,7 +61,7 @@ export default function BlogList({
   return (
     <InfiniteScroll
       hasMore={pages.hasMore}
-      pageStart={0}
+      pageStart={1}
       loadMore={loadMore}
       loader={
         <span key={0} className="loader">
