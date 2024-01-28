@@ -143,24 +143,27 @@ export interface Database {
           content: string
           external_reference_url: string | null
           id: number
+          is_deleted: boolean | null
           parent_comment_id: number | null
-          post_id: number
+          post_id: number | null
           user_id: string
         }
         Insert: {
           content: string
           external_reference_url?: string | null
           id?: never
+          is_deleted?: boolean | null
           parent_comment_id?: number | null
-          post_id: number
+          post_id?: number | null
           user_id: string
         }
         Update: {
           content?: string
           external_reference_url?: string | null
           id?: never
+          is_deleted?: boolean | null
           parent_comment_id?: number | null
-          post_id?: number
+          post_id?: number | null
           user_id?: string
         }
         Relationships: [
@@ -183,36 +186,6 @@ export interface Database {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      post_secion_tags: {
-        Row: {
-          post_section_id: number
-          tag_id: number
-        }
-        Insert: {
-          post_section_id: number
-          tag_id: number
-        }
-        Update: {
-          post_section_id?: number
-          tag_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "post_secion_tags_post_section_id_fkey"
-            columns: ["post_section_id"]
-            isOneToOne: false
-            referencedRelation: "post_sections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_secion_tags_tag_id_fkey"
-            columns: ["tag_id"]
-            isOneToOne: false
-            referencedRelation: "tags"
             referencedColumns: ["id"]
           }
         ]
@@ -260,7 +233,52 @@ export interface Database {
           destination_post_section_id?: number
           source_post_section_id?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "post_section_references_destination_post_section_id_fkey"
+            columns: ["destination_post_section_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_section_references_source_post_section_id_fkey"
+            columns: ["source_post_section_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      post_section_tags: {
+        Row: {
+          post_section_id: number
+          tag_id: number
+        }
+        Insert: {
+          post_section_id: number
+          tag_id: number
+        }
+        Update: {
+          post_section_id?: number
+          tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_section_tags_post_section_id_fkey"
+            columns: ["post_section_id"]
+            isOneToOne: false
+            referencedRelation: "post_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_section_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       post_sections: {
         Row: {
