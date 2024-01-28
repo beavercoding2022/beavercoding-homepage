@@ -23,11 +23,14 @@ export default async function PortfolioPost({
   }
 
   return (
-    <div className="p-2">
-      <CustomLink href="/portfolio">Back to Portfolio</CustomLink>
-      <p />
-      <CopyCurrentUrl />
-      <SinglePortfolio post={post} postSections={postSections} />
-    </div>
+    <>
+      <div className="flex flex-row-reverse text-slate-500">
+        <CustomLink href="/portfolio">Back to Portfolio</CustomLink>
+        <CopyCurrentUrl />
+      </div>
+      <div className="p-2">
+        <SinglePortfolio post={post} postSections={postSections} />
+      </div>
+    </>
   );
 }

@@ -27,7 +27,7 @@ export default function RootLayout({
         <ThemeProvider defaultTheme="dark" disableTransitionOnChange>
           <SupabaseProvider>
             <Navbar />
-            <div className="max-w-screen-lg p-6 mx-auto">
+            <div className="max-w-screen-lg px-6 mx-auto">
               <main
                 id="skip"
                 className="flex flex-col prose dark:prose-invert max-w-full"

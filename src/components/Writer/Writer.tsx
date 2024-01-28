@@ -19,6 +19,7 @@ import sluggify from '@/src/utils/sluggify';
 import { MDXEditorMethods } from '@mdxeditor/editor';
 
 import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -45,6 +46,11 @@ export type WriterProps = {
   postingType: PostingType;
 };
 
+type Section = {
+  markdownSections: string[];
+  currentIndex: number;
+};
+
 const initialModalstate: { isOpen: boolean; message: string } = {
   isOpen: false,
   message: 'Default Modal',
@@ -66,7 +72,7 @@ export default function Writer({
   const [supabase] = React.useState(() => createPagesBrowserClient<Database>());
   const editorRef = React.useRef<MDXEditorMethods>(null);
   const [title, setTitle] = React.useState<string>('');
-
+  const [thumbnail, setThumbnail] = React.useState<string | null>(null);
   const [category, setCategory] =
     React.useState<CategoryState>(initialCategoryState);
   const [modal, setModal] = React.useState<{
@@ -74,10 +80,7 @@ export default function Writer({
     message: string;
   }>(initialModalstate);
 
-  const [writingSection, setWritingSection] = React.useState<{
-    markdownSections: string[];
-    currentIndex: number;
-  }>(() => ({
+  const [writingSection, setWritingSection] = React.useState<Section>(() => ({
     markdownSections: [initialMarkdown],
     currentIndex: 0,
   }));
@@ -167,6 +170,7 @@ export default function Writer({
             slug,
             posting_type: postingType,
             public: true,
+            thumbnail_url: thumbnail,
           },
         ]);
 
@@ -254,9 +258,48 @@ export default function Writer({
     push,
     slug,
     supabase,
+    thumbnail,
     title,
     writingSection.markdownSections,
   ]);
+
+  const handleClickEditSection = React.useCallback(
+    (markdownSection: Section['markdownSections'][number], index: number) =>
+      () => {
+        setWritingSection((prev) => ({
+          ...prev,
+          currentIndex: index,
+        }));
+        editorRef.current?.setMarkdown(markdownSection);
+      },
+    [],
+  );
+  const handleClickModalClose: React.MouseEventHandler<HTMLButtonElement> =
+    React.useCallback(
+      (event) => {
+        event.stopPropagation();
+        handleCloseModal();
+      },
+      [handleCloseModal],
+    );
+
+  const handleUploadThumbnail: React.ChangeEventHandler<HTMLInputElement> =
+    React.useCallback((e) => {
+      const file = e.target.files?.item(0);
+      if (!file) {
+        setModal({
+          isOpen: true,
+          message: 'File is not selected',
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setThumbnail(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }, []);
 
   return (
     <>
@@ -271,6 +314,14 @@ export default function Writer({
           />
         </div>
         <p>slug: {slug}</p>
+
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="thumbnail">Thumbnail</Label>
+          <Input id="thumbnail" type="file" onChange={handleUploadThumbnail} />
+          {thumbnail && (
+            <Image src={thumbnail} alt="thumbnail" width={200} height={200} />
+          )}
+        </div>
         <CategorySelector state={category} setState={setCategory} />
         <div className="flex md:flex-row flex-col">
           <section className="flex flex-1 py-2 mr-1">
@@ -290,13 +341,7 @@ export default function Writer({
                 key={`index_${index}`}
                 markdown={markdownSection}
                 current={writingSection.currentIndex === index}
-                onClickEdit={() => {
-                  setWritingSection((prev) => ({
-                    ...prev,
-                    currentIndex: index,
-                  }));
-                  editorRef.current?.setMarkdown(markdownSection);
-                }}
+                onClickEdit={handleClickEditSection(markdownSection, index)}
               />
             ))}
             <Button variant={'outline'} onClick={onClickPlus}>
@@ -317,13 +362,7 @@ export default function Writer({
           </DialogHeader>
           <p>{modal.message}</p>
           <DialogFooter>
-            <Button
-              variant={'outline'}
-              onClick={(event) => {
-                event.stopPropagation();
-                handleCloseModal();
-              }}
-            >
+            <Button variant={'outline'} onClick={handleClickModalClose}>
               Close
             </Button>
           </DialogFooter>
