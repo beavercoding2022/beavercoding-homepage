@@ -4,6 +4,14 @@ const nextConfig = {
   experimental: {
     mdxRs: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: process.env.NEXT_PUBLIC_SUPABASE_URL,
+      },
+    ],
+  },
 };
 
 const withMDX = require('@next/mdx')();

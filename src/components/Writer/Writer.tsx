@@ -73,6 +73,7 @@ export default function Writer({
   const editorRef = React.useRef<MDXEditorMethods>(null);
   const [title, setTitle] = React.useState<string>('');
   const [thumbnail, setThumbnail] = React.useState<string | null>(null);
+  const fileRef = React.useRef<HTMLInputElement>(null);
   const [category, setCategory] =
     React.useState<CategoryState>(initialCategoryState);
   const [modal, setModal] = React.useState<{
@@ -95,6 +96,14 @@ export default function Writer({
 
   const handleUpload = React.useCallback(
     async function (image: File): Promise<string> {
+      if (title === '') {
+        setModal({
+          isOpen: true,
+          message: 'The title is empty',
+        });
+        throw new Error('The title is empty');
+      }
+
       const { data, error } = await supabase.storage
         .from('images')
         .upload(`${postingType}/${slug}/${image.name}`, image, {
@@ -118,7 +127,7 @@ export default function Writer({
 
       return newPublicUrl;
     },
-    [postingType, slug, supabase.storage],
+    [postingType, slug, supabase.storage, title],
   );
 
   const onChangeMarkdown = React.useCallback((markdown: string) => {
@@ -274,6 +283,7 @@ export default function Writer({
       },
     [],
   );
+
   const handleClickModalClose: React.MouseEventHandler<HTMLButtonElement> =
     React.useCallback(
       (event) => {
@@ -284,22 +294,35 @@ export default function Writer({
     );
 
   const handleUploadThumbnail: React.ChangeEventHandler<HTMLInputElement> =
-    React.useCallback((e) => {
-      const file = e.target.files?.item(0);
-      if (!file) {
-        setModal({
-          isOpen: true,
-          message: 'File is not selected',
-        });
-        return;
-      }
+    React.useCallback(
+      async (e) => {
+        if (title === '') {
+          setModal({
+            isOpen: true,
+            message: 'The title is empty',
+          });
+          setThumbnail(null);
+          if (fileRef.current) {
+            fileRef.current.value = '';
+          }
+          return;
+        }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setThumbnail(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }, []);
+        const file = e.target.files?.item(0);
+        if (!file) {
+          setModal({
+            isOpen: true,
+            message: 'File is not selected',
+          });
+          return;
+        }
+
+        const thumbnailUrl = await handleUpload(file);
+
+        setThumbnail(thumbnailUrl);
+      },
+      [handleUpload, title],
+    );
 
   return (
     <>
@@ -317,7 +340,12 @@ export default function Writer({
 
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="thumbnail">Thumbnail</Label>
-          <Input id="thumbnail" type="file" onChange={handleUploadThumbnail} />
+          <Input
+            id="thumbnail"
+            type="file"
+            onChange={handleUploadThumbnail}
+            ref={fileRef}
+          />
           {thumbnail && (
             <Image src={thumbnail} alt="thumbnail" width={200} height={200} />
           )}
