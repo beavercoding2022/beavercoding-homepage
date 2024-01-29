@@ -88,6 +88,7 @@ export default function PortfolioList({
             </div>
             <div className="flex flex-col flex-1 ml-1">
               <div>
+                Tech Stack:{' '}
                 {post.categories.map((category) => (
                   <CategoryLinkWithIcon
                     key={`post_${post.id}_categories_${category.id}`}

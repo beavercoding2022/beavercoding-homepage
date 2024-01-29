@@ -1,4 +1,9 @@
+import { HoverEffect } from '@/components/ui/card-hover-effect';
+import { getValidCategories } from '@/src/backend/posts';
+
 export default async function Index() {
+  const [categories] = await Promise.all([getValidCategories()]);
+
   return (
     <header className="flex-1 flex flex-col gap-6">
       <div className="flex flex-col gap-16 items-center animate-in">
@@ -10,6 +15,9 @@ export default async function Index() {
           해결책을 제시합니다.
         </p>
         <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+        <div className="max-w-5xl mx-auto px-8">
+          <HoverEffect items={categories} />
+        </div>
       </div>
     </header>
   );

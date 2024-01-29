@@ -17,24 +17,22 @@ export default async function DocIndexPage() {
       )}
       <h1 className="text-3xl font-bold">Documents</h1>
       <div className="mb-5" />
-      <ul>
-        {posts.map((post) => (
-          <div key={`post_${post.id}`} className="flex flex-row items-center">
-            <CustomLink href={`/d/${post.slug}`}>{post.title}</CustomLink>
-            <div className="flex flex-row">
-              {post.categories
-                .filter((category) => category.thumbnail_url)
-                .map((category) => (
-                  <CategoryLinkWithIcon
-                    {...category}
-                    onlyIcon
-                    key={`category_${category.id}`}
-                  />
-                ))}
-            </div>
+      {posts.map((post) => (
+        <div key={`post_${post.id}`} className="flex flex-row items-center">
+          <CustomLink href={`/d/${post.slug}`}>{post.title}</CustomLink>
+          <div className="flex flex-row">
+            {post.categories
+              .filter((category) => category.thumbnail_url)
+              .map((category) => (
+                <CategoryLinkWithIcon
+                  {...category}
+                  onlyIcon
+                  key={`category_${category.id}`}
+                />
+              ))}
           </div>
-        ))}
-      </ul>
+        </div>
+      ))}
     </div>
   );
 }

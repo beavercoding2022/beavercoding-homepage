@@ -51,12 +51,12 @@ export async function getPost(
 
 export async function getPostsByCategory(
   categorySlug: Database['public']['Tables']['categories']['Row']['slug'],
-  postingType: NonNullable<
+  postingType?: NonNullable<
     Database['public']['Tables']['posts']['Row']['posting_type']
   >,
 ) {
   const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase
+  const query = supabase
     .from('categories')
     .select(
       `*,
@@ -66,9 +66,12 @@ export async function getPostsByCategory(
       )
     `,
     )
-    .eq('posts.posting_type', postingType)
     .eq('slug', categorySlug)
     .order('created_at', { referencedTable: 'posts', ascending: false });
+
+  const { data, error } = postingType
+    ? await query.eq('posts.posting_type', postingType)
+    : await query;
 
   if (error) {
     throw error;
@@ -109,7 +112,7 @@ export async function getPostSections(
 }
 
 export async function getValidCategories(
-  postingType: Database['public']['Tables']['posts']['Row']['posting_type'],
+  postingType?: Database['public']['Tables']['posts']['Row']['posting_type'],
 ) {
   const supabase = createServerSupabaseClient();
   const query = postingType
