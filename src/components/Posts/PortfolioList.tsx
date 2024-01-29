@@ -7,6 +7,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Image from 'next/image';
+import CategoryLinkWithIcon from '@/src/components/icons/CategoryLinkWithIcon';
 
 type PortfoliosProps = {
   initialPortfolios: Awaited<ReturnType<typeof getPosts>>;
@@ -86,7 +87,14 @@ export default function PortfolioList({
               )}
             </div>
             <div className="flex flex-col flex-1 ml-1">
-              <p>{post.categories.map((v) => v.name).join(',')}</p>
+              <div>
+                {post.categories.map((category) => (
+                  <CategoryLinkWithIcon
+                    key={`post_${post.id}_categories_${category.id}`}
+                    {...category}
+                  />
+                ))}
+              </div>
               {post.post_sections?.[0] && (
                 <Markdown
                   remarkPlugins={[

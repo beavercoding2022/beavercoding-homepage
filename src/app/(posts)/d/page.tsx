@@ -1,5 +1,6 @@
 import { getSession } from '@/src/app/supabase-server';
 import { getPosts } from '@/src/backend/posts';
+import CategoryLinkWithIcon from '@/src/components/icons/CategoryLinkWithIcon';
 import CustomLink from '@/src/components/ui/CustomLink';
 import Image from 'next/image';
 
@@ -18,23 +19,16 @@ export default async function DocIndexPage() {
       <div className="mb-5" />
       <ul>
         {posts.map((post) => (
-          <div
-            key={`category_${post.id}`}
-            className="flex flex-row items-center"
-          >
+          <div key={`post_${post.id}`} className="flex flex-row items-center">
             <CustomLink href={`/d/${post.slug}`}>{post.title}</CustomLink>
             <div className="flex flex-row">
               {post.categories
                 .filter((category) => category.thumbnail_url)
                 .map((category) => (
-                  <Image
-                    key={`category_image_${post.id}_${category.id}`}
-                    src={category.thumbnail_url!}
-                    alt={category.name}
-                    className="m-0"
-                    width={30}
-                    height={30}
-                    priority={false}
+                  <CategoryLinkWithIcon
+                    {...category}
+                    onlyIcon
+                    key={`category_${category.id}`}
                   />
                 ))}
             </div>

@@ -37,7 +37,7 @@ export async function getPost(
   const supabase = createServerSupabaseClient();
   const { data, error } = await supabase
     .from('posts')
-    .select('*, categories!post_categories (id, name, slug)')
+    .select('*, categories!post_categories (*)')
     .eq('slug', slug)
     .eq('posting_type', postingType)
     .single();

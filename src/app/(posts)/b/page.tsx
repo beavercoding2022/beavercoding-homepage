@@ -20,6 +20,7 @@ export default async function BlogIndexPage() {
           <div className="mb-5" />
         </>
       )}
+      <h1 className="text-3xl font-bold">Blog</h1>
       <BlogList
         initialPosts={posts}
         preferredLanguage={mostPreferredLanguage}

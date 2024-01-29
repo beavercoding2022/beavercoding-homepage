@@ -1,4 +1,6 @@
 import { getPost, getPostSectionsBySlug } from '@/src/backend/posts';
+import CategoryIcon from '@/src/components/icons/CategoryIcon';
+import CategoryLinkWithIcon from '@/src/components/icons/CategoryLinkWithIcon';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
 
@@ -20,7 +22,10 @@ export default function SingleBlog({ post, postSections }: SingleBlogProps) {
         />
       )}
       {post.categories.map((category) => (
-        <span key={category.id}>{category.name}</span>
+        <CategoryLinkWithIcon
+          key={`post_categories_${category.id}`}
+          {...category}
+        />
       ))}
       {postSections.map((section) => (
         <div
