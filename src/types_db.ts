@@ -40,18 +40,21 @@ export interface Database {
           id: number
           name: string
           slug: string
+          thumbnail_url: string | null
         }
         Insert: {
           created_at?: string
           id?: never
           name: string
           slug: string
+          thumbnail_url?: string | null
         }
         Update: {
           created_at?: string
           id?: never
           name?: string
           slug?: string
+          thumbnail_url?: string | null
         }
         Relationships: []
       }
@@ -186,6 +189,36 @@ export interface Database {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      post_linked_list: {
+        Row: {
+          next_post_id: number
+          prev_post_id: number
+        }
+        Insert: {
+          next_post_id: number
+          prev_post_id: number
+        }
+        Update: {
+          next_post_id?: number
+          prev_post_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_linked_list_next_post_id_fkey"
+            columns: ["next_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_linked_list_prev_post_id_fkey"
+            columns: ["prev_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           }
         ]
@@ -367,6 +400,7 @@ export interface Database {
           thumbnail_url: string | null
           title: string
           user_id: string
+          viewcount: number
         }
         Insert: {
           category_id?: number | null
@@ -379,6 +413,7 @@ export interface Database {
           thumbnail_url?: string | null
           title: string
           user_id?: string
+          viewcount?: number
         }
         Update: {
           category_id?: number | null
@@ -391,6 +426,7 @@ export interface Database {
           thumbnail_url?: string | null
           title?: string
           user_id?: string
+          viewcount?: number
         }
         Relationships: [
           {
