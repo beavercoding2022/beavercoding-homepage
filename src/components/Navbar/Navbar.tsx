@@ -22,6 +22,7 @@ export default async function Navbar() {
               <CustomLink href="/portfolio">Portfolio</CustomLink>
               <CustomLink href="/b">Blog</CustomLink>
               <CustomLink href="/d">Docs</CustomLink>
+              <CustomLink href="/c">Categories</CustomLink>
             </nav>
           </div>
           <div className="flex justify-end space-x-8">
@@ -42,6 +43,7 @@ export default async function Navbar() {
         <CustomLink href="/portfolio">Portfolio</CustomLink>
         <CustomLink href="/b">Blog</CustomLink>
         <CustomLink href="/d">Docs</CustomLink>
+        <CustomLink href="/c">Categories</CustomLink>
       </div>
     </nav>
   );
