@@ -1,4 +1,4 @@
-import SinglePortfolio from '@/src/app/portfolio/SinglePortfolio';
+import SinglePortfolio from '@/src/app/(posts)/portfolio/SinglePortfolio';
 import { getPost, getPostSectionsBySlug } from '@/src/backend/posts';
 import CopyCurrentUrl from '@/src/components/ui/CopyCurrentUrl';
 import CustomLink from '@/src/components/ui/CustomLink';

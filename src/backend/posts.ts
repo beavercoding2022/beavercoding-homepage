@@ -15,7 +15,7 @@ export async function getPosts(
     .from('posts')
     .select(
       `*, 
-      categories!post_categories (id, name, slug), 
+      categories!post_categories (*), 
       post_sections!inner (id, content)
       `,
     )
@@ -49,6 +49,34 @@ export async function getPost(
   return data;
 }
 
+export async function getPostsByCategory(
+  categorySlug: Database['public']['Tables']['categories']['Row']['slug'],
+  postingType: NonNullable<
+    Database['public']['Tables']['posts']['Row']['posting_type']
+  >,
+) {
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from('categories')
+    .select(
+      `*,
+      posts!post_categories!inner (
+        *,
+        categories!post_categories!inner (*)
+      )
+    `,
+    )
+    .eq('posts.posting_type', postingType)
+    .eq('slug', categorySlug)
+    .order('created_at', { referencedTable: 'posts', ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  return data.map((v) => v.posts).flatMap((v) => v);
+}
+
 export async function getPostSectionsBySlug(
   slug: Database['public']['Tables']['posts']['Row']['slug'],
 ) {
@@ -74,6 +102,25 @@ export async function getPostSections(
     .from('post_sections')
     .select('*')
     .eq('post_id', postId);
+  if (error) {
+    throw error;
+  }
+  return data;
+}
+
+export async function getValidCategories(
+  postingType: Database['public']['Tables']['posts']['Row']['posting_type'],
+) {
+  const supabase = createServerSupabaseClient();
+  const query = postingType
+    ? supabase
+        .from('categories')
+        .select('*, posts!post_categories!inner (*)')
+        .eq('posts.posting_type', postingType)
+    : supabase.from('categories').select('*, posts!post_categories!inner (*)');
+
+  const { data, error } = await query;
+
   if (error) {
     throw error;
   }
