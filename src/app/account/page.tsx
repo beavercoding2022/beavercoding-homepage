@@ -72,13 +72,10 @@ export default async function Account() {
           <h1 className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
             Account
           </h1>
-          <p className="max-w-2xl m-auto mt-5 text-xl text-zinc-200 sm:text-center sm:text-2xl">
-            We partnered with Stripe for a simplified billing.
-          </p>
         </div>
       </div>
       <div className="p-4">
-        <Card
+        {/* <Card
           title="Your Plan"
           description={
             subscription
@@ -94,7 +91,7 @@ export default async function Account() {
               <Link href="/">Choose your plan</Link>
             )}
           </div>
-        </Card>
+        </Card> */}
         <Card
           title="Your Name"
           description="Please enter your full name, or a display name you are comfortable with."
