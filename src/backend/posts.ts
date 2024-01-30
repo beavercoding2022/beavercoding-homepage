@@ -115,17 +115,44 @@ export async function getValidCategories(
   postingType?: Database['public']['Tables']['posts']['Row']['posting_type'],
 ) {
   const supabase = createServerSupabaseClient();
+
+  const baseQuery = supabase
+    .from('categories')
+    .select('*, posts!post_categories!inner (id, posting_type)');
   const query = postingType
-    ? supabase
-        .from('categories')
-        .select('*, posts!post_categories!inner (*)')
-        .eq('posts.posting_type', postingType)
-    : supabase.from('categories').select('*, posts!post_categories!inner (*)');
+    ? baseQuery.eq('posts.posting_type', postingType)
+    : baseQuery;
 
   const { data, error } = await query;
 
   if (error) {
     throw error;
   }
-  return data;
+
+  const result = data.map((cat) => ({
+    ...cat,
+    posts: cat.posts.reduce(
+      (acc, cur) => {
+        if (!cur.posting_type) {
+          return {
+            ...acc,
+            'n/a': acc['n/a'] + 1,
+          };
+        }
+
+        return {
+          ...acc,
+          [cur.posting_type]: acc[cur.posting_type] + 1,
+        };
+      },
+      {
+        blog: 0,
+        portfolio: 0,
+        docs: 0,
+        'n/a': 0,
+      },
+    ),
+  }));
+
+  return result;
 }
