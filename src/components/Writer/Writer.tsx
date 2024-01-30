@@ -12,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import CategorySelector from '@/src/components/Writer/CategorySelector';
-import Section from '@/src/components/Writer/Section';
+import WritingSection from '@/src/components/Writer/Section';
 import { ForwardRefEditor } from '@/src/components/ui/Editor/ForwardedEditor';
 import { Database } from '@/src/types_db';
 import sluggify from '@/src/utils/sluggify';
@@ -46,8 +46,12 @@ export type WriterProps = {
   postingType: PostingType;
 };
 
-type Section = {
-  markdownSections: string[];
+type WritingSection = {
+  markdownSections: {
+    markdown: string;
+    externalReference: string | null;
+    internalReferencePostSectionId: string | null;
+  }[];
   currentIndex: number;
 };
 
@@ -65,15 +69,28 @@ const initialCategoryState: CategoryState = {
   selectedCategories: [],
 };
 
+const initialWritingSection: WritingSection = {
+  markdownSections: [
+    {
+      markdown: initialMarkdown,
+      externalReference: null,
+      internalReferencePostSectionId: null,
+    },
+  ],
+  currentIndex: 0,
+};
+
 export default function Writer({
   postingType,
 }: React.PropsWithChildren<WriterProps>) {
   const { push } = useRouter();
-  const [supabase] = React.useState(() => createPagesBrowserClient<Database>());
   const editorRef = React.useRef<MDXEditorMethods>(null);
+  const fileRef = React.useRef<HTMLInputElement>(null);
+  const [supabase] = React.useState(() => createPagesBrowserClient<Database>());
+
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [title, setTitle] = React.useState<string>('');
   const [thumbnail, setThumbnail] = React.useState<string | null>(null);
-  const fileRef = React.useRef<HTMLInputElement>(null);
   const [category, setCategory] =
     React.useState<CategoryState>(initialCategoryState);
   const [modal, setModal] = React.useState<{
@@ -81,10 +98,9 @@ export default function Writer({
     message: string;
   }>(initialModalstate);
 
-  const [writingSection, setWritingSection] = React.useState<Section>(() => ({
-    markdownSections: [initialMarkdown],
-    currentIndex: 0,
-  }));
+  const [writingSection, setWritingSection] = React.useState<WritingSection>(
+    initialWritingSection,
+  );
 
   const [imagePaths, setImagePathes] = React.useState<string[]>([]);
 
@@ -135,7 +151,10 @@ export default function Writer({
       ...prev,
       markdownSections: [
         ...prev.markdownSections.slice(0, prev.currentIndex),
-        markdown,
+        {
+          ...prev.markdownSections[prev.currentIndex],
+          markdown,
+        },
         ...prev.markdownSections.slice(prev.currentIndex + 1),
       ],
     }));
@@ -148,14 +167,17 @@ export default function Writer({
 
   const onClickPlus = React.useCallback(() => {
     setWritingSection((prev) => {
-      if (prev.markdownSections[prev.currentIndex] === '') {
+      if (prev.markdownSections[prev.currentIndex].markdown === '') {
         return prev;
       }
 
       return {
         ...prev,
         currentIndex: prev.currentIndex + 1,
-        markdownSections: [...prev.markdownSections, ''],
+        markdownSections: [
+          ...prev.markdownSections,
+          initialWritingSection.markdownSections[0],
+        ],
       };
     });
     editorRef.current?.setMarkdown('');
@@ -169,6 +191,8 @@ export default function Writer({
       });
       return;
     }
+
+    setLoading(true);
 
     try {
       const { error } = await supabase
@@ -217,7 +241,8 @@ export default function Writer({
         .insert<Database['public']['Tables']['post_sections']['Insert']>(
           writingSection.markdownSections.map((markdownSection, index) => ({
             post_id: postId,
-            content: markdownSection,
+            content: markdownSection.markdown,
+            external_reference_url: markdownSection.externalReference,
             section_order: index,
           })),
         );
@@ -260,6 +285,8 @@ export default function Writer({
         isOpen: true,
         message: (error as Error)?.message,
       });
+    } finally {
+      setLoading(false);
     }
   }, [
     category.selectedCategories,
@@ -273,14 +300,69 @@ export default function Writer({
   ]);
 
   const handleClickEditSection = React.useCallback(
-    (markdownSection: Section['markdownSections'][number], index: number) =>
+    (
+      markdownSection: WritingSection['markdownSections'][number],
+      index: number,
+    ) =>
       () => {
         setWritingSection((prev) => ({
           ...prev,
           currentIndex: index,
         }));
-        editorRef.current?.setMarkdown(markdownSection);
+        editorRef.current?.setMarkdown(markdownSection.markdown);
       },
+    [],
+  );
+
+  const handleClickDeleteSection = React.useCallback(
+    (targetIndex: number) => () => {
+      setWritingSection((prev) => {
+        if (prev.currentIndex === targetIndex && prev.currentIndex > 0) {
+          editorRef.current?.setMarkdown(
+            prev.markdownSections[targetIndex - 1].markdown,
+          );
+          return {
+            ...prev,
+            markdownSections: [
+              ...prev.markdownSections.slice(0, targetIndex),
+              ...prev.markdownSections.slice(targetIndex + 1),
+            ],
+            currentIndex: targetIndex - 1,
+          };
+        }
+
+        if (prev.currentIndex === targetIndex && prev.currentIndex === 0) {
+          editorRef.current?.setMarkdown('');
+          return {
+            ...prev,
+            markdownSections: [
+              ...prev.markdownSections.slice(1),
+              ...prev.markdownSections.slice(targetIndex + 1),
+            ],
+            currentIndex: 0,
+          };
+        }
+
+        if (prev.currentIndex > targetIndex) {
+          return {
+            ...prev,
+            currentIndex: prev.currentIndex - 1,
+            markdownSections: [
+              ...prev.markdownSections.slice(0, targetIndex),
+              ...prev.markdownSections.slice(targetIndex + 1),
+            ],
+          };
+        }
+
+        return {
+          ...prev,
+          markdownSections: [
+            ...prev.markdownSections.slice(0, targetIndex),
+            ...prev.markdownSections.slice(targetIndex + 1),
+          ],
+        };
+      });
+    },
     [],
   );
 
@@ -324,6 +406,10 @@ export default function Writer({
       [handleUpload, title],
     );
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <>
       <div className="my-2">
@@ -351,26 +437,59 @@ export default function Writer({
           )}
         </div>
         <CategorySelector state={category} setState={setCategory} />
-        <div className="flex md:flex-row flex-col">
-          <section className="flex flex-1 py-2 mr-1">
+        <div className="flex md:flex-row flex-col min-h-[500px]">
+          <section className="flex flex-col flex-1 py-2 mr-1">
+            <Label>Markdown</Label>
+
             <ForwardRefEditor
               ref={editorRef}
               markdown={
                 writingSection.markdownSections[writingSection.currentIndex]
+                  ?.markdown || ''
               }
               onChange={onChangeMarkdown}
               handleUpload={handleUpload}
               imageAutocompleteSuggestions={imagePaths}
             />
+            <Label className="my-2" htmlFor="external_reference_url">
+              External Reference URL
+            </Label>
+            <Input
+              type="text"
+              id="external_reference_url"
+              value={
+                writingSection.markdownSections[writingSection.currentIndex]
+                  .externalReference || ''
+              }
+              onChange={(event) => {
+                setWritingSection((prev) => ({
+                  ...prev,
+                  markdownSections: [
+                    ...prev.markdownSections.slice(0, prev.currentIndex),
+                    {
+                      ...prev.markdownSections[prev.currentIndex],
+                      externalReference: event.target.value,
+                    },
+                    ...prev.markdownSections.slice(prev.currentIndex + 1),
+                  ],
+                }));
+              }}
+            />
           </section>
           <section className="flex flex-1 flex-col py-2 ml-1">
+            <Label>Preview</Label>
             {writingSection.markdownSections.map((markdownSection, index) => (
-              <Section
-                key={`index_${index}`}
-                markdown={markdownSection}
-                current={writingSection.currentIndex === index}
-                onClickEdit={handleClickEditSection(markdownSection, index)}
-              />
+              <React.Fragment key={`writing_section_index_${index}`}>
+                <WritingSection
+                  markdown={markdownSection.markdown}
+                  length={writingSection.markdownSections.length}
+                  currentIndex={writingSection.currentIndex}
+                  renderingIndex={index}
+                  onClickEdit={handleClickEditSection(markdownSection, index)}
+                  onClickDelete={handleClickDeleteSection(index)}
+                  externalReference={markdownSection.externalReference}
+                />
+              </React.Fragment>
             ))}
             <Button variant={'outline'} onClick={onClickPlus}>
               +

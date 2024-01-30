@@ -4,27 +4,47 @@ import remarkGfm from 'remark-gfm';
 
 export type SectionProps = {
   markdown: string;
-  current: boolean;
+  currentIndex: number;
+  renderingIndex: number;
+  length: number;
   onClickEdit: () => void;
+  onClickDelete: () => void;
+  externalReference: string | null;
 };
 
 export default function Section({
   markdown,
-  current,
+  currentIndex,
+  renderingIndex,
+  length,
+  externalReference,
   onClickEdit,
+  onClickDelete,
 }: SectionProps) {
   return (
-    <div className="relative border-2 my-2 p-2">
-      {!current && (
-        <Button
-          onClick={() => {
-            onClickEdit();
-          }}
-          className="absolute top-0 right-0"
-        >
-          Edit
-        </Button>
-      )}
+    <div className="relative border-2 my-2 p-2 min-h-[25px]">
+      <div className="absolute top-0 right-0">
+        {currentIndex !== renderingIndex && (
+          <Button
+            variant={'outline'}
+            onClick={() => {
+              onClickEdit();
+            }}
+          >
+            Edit
+          </Button>
+        )}
+        {length > 1 && (
+          <Button
+            variant={'outline'}
+            onClick={() => {
+              onClickDelete();
+            }}
+          >
+            Delete
+          </Button>
+        )}
+      </div>
       <Markdown
         remarkPlugins={[
           [
@@ -40,6 +60,9 @@ export default function Section({
       >
         {markdown}
       </Markdown>
+      {externalReference && (
+        <div className="text-xs text-gray-500">{externalReference}</div>
+      )}
     </div>
   );
 }
