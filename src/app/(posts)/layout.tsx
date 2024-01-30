@@ -1,20 +1,14 @@
+import BackButton from '@/src/components/ui/BackButton';
+import CopyCurrentUrl from '@/src/components/ui/CopyCurrentUrl';
 import { PropsWithChildren } from 'react';
 
-type PostsLayoutProps = {
-  params:
-    | {
-        slug: string;
-      }
-    | {
-        slug: string[];
-      }
-    | {
-        category: string;
-      };
-};
-
-export default function PostsLayout(
-  props: PropsWithChildren<PostsLayoutProps>,
-) {
-  return <>{props.children}</>;
+export default function PostsLayout(props: PropsWithChildren) {
+  return (
+    <>
+      <div className="flex flex-row text-slate-500">
+        <CopyCurrentUrl />
+      </div>
+      {props.children}
+    </>
+  );
 }

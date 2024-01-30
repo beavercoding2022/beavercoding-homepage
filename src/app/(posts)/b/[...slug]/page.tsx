@@ -24,10 +24,6 @@ export default async function BlogPost({
 
   return (
     <>
-      <div className="flex flex-row-reverse text-slate-500">
-        <CustomLink href="/b">Back to Blog</CustomLink>
-        <CopyCurrentUrl />
-      </div>
       <div className="p-2">
         <h1>{post.title}</h1>
         {post.thumbnail_url && (
@@ -46,6 +42,9 @@ export default async function BlogPost({
             <MDXRemote source={section.content} />
           </div>
         ))}
+      </div>
+      <div className="flex flex-row-reverse text-slate-500">
+        <CustomLink href="/b">Back to Blog List</CustomLink>
       </div>
     </>
   );

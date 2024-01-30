@@ -10,14 +10,14 @@ export default async function DocCategoryPage({
 
   return (
     <>
-      <div className="flex flex-row-reverse text-slate-500">
-        <CustomLink href={`/c`}>Back to Category List</CustomLink>
-      </div>
       {posts.map((post) => (
         <div key={`post_${post.id}`}>
           <CustomLink post={post}>{post.title}</CustomLink>
         </div>
       ))}
+      <div className="flex flex-row-reverse text-slate-500">
+        <CustomLink href={`/c`}>Back to Category List</CustomLink>
+      </div>
     </>
   );
 }
