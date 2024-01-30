@@ -23,6 +23,7 @@ export default async function Navbar() {
               <CustomLink href="/b">Blog</CustomLink>
               <CustomLink href="/d">Docs</CustomLink>
               <CustomLink href="/c">Categories</CustomLink>
+              <CustomLink href="/s">Showcase</CustomLink>
             </nav>
           </div>
           <div className="flex justify-end space-x-8">
@@ -37,13 +38,22 @@ export default async function Navbar() {
           </div>
         </div>
       </div>
-      <div className="sm:hidden flex flex-row">
+      <div className="sm:hidden flex flex-row flex-wrap">
         <CustomLink href="/">Home</CustomLink>
         <CustomLink href="/about">About</CustomLink>
         <CustomLink href="/portfolio">Portfolio</CustomLink>
         <CustomLink href="/b">Blog</CustomLink>
         <CustomLink href="/d">Docs</CustomLink>
         <CustomLink href="/c">Categories</CustomLink>
+        <CustomLink href="/s">Showcase</CustomLink>
+        {user ? (
+          <>
+            <CustomLink href="/account">Account</CustomLink>
+            <SignOutButton />
+          </>
+        ) : (
+          <CustomLink href="/sign-in">Sign in</CustomLink>
+        )}
       </div>
     </nav>
   );
