@@ -50,7 +50,7 @@ export const HoverEffect = ({
               />
             )}
           </AnimatePresence>
-          <Card>
+          <Card className={'justify-center'}>
             <CardTitle>{category.name}</CardTitle>
             <CardDescription>
               <CategoryIcon {...category} size={150} />
@@ -90,7 +90,12 @@ export const CardTitle = ({
   children: React.ReactNode;
 }) => {
   return (
-    <h4 className={cn('text-zinc-100 font-bold tracking-wide mt-4', className)}>
+    <h4
+      className={cn(
+        'text-zinc-100 font-bold tracking-wide mt-4 text-center',
+        className,
+      )}
+    >
       {children}
     </h4>
   );
