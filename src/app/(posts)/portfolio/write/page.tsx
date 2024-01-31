@@ -17,5 +17,5 @@ export default async function WritePortfolioPost() {
     redirect('/');
   }
 
-  return <Writer postingType={'portfolio'} />;
+  return <Writer posting_type={'portfolio'} />;
 }

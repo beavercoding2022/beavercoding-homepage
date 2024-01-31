@@ -1,6 +1,7 @@
 import { getFullPost } from '@/src/backend/posts';
 import { UseWriterProps } from '@/src/components/Writer/useWriter';
 import { Database } from '@/src/types_db';
+import sluggify from '@/src/utils/sluggify';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export type PostingType = NonNullable<
@@ -41,7 +42,7 @@ export type PostSectionState = {
   current_index: number;
 };
 
-const initialPostSection: PostSectionState['post_sections'][number] = {
+export const initialPostSection: PostSectionState['post_sections'][number] = {
   content: '* Hello World',
   external_reference_url: null,
   image_paths: [],
@@ -136,7 +137,10 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
         }>,
       ) {
         state.title = action.payload.title;
-        state.slug = action.payload.uuid.slice(0, 8);
+        state.slug =
+          sluggify(action.payload.title) +
+          '-' +
+          action.payload.uuid.slice(0, 8);
       },
       setThumbnail(state, action: PayloadAction<string>) {
         state.thumbnail_url = action.payload;
@@ -163,7 +167,7 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
         if (
           state.post_sections_state.post_sections[
             state.post_sections_state.current_index
-          ].content === ''
+          ].content === initialPostSection.content
         ) {
           return;
         }

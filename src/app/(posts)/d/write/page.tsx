@@ -16,5 +16,5 @@ export default async function WriteDoc() {
     redirect('/');
   }
 
-  return <Writer postingType={'docs'} />;
+  return <Writer posting_type={'docs'} />;
 }

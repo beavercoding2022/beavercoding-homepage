@@ -76,6 +76,8 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
               alt="thumbnail"
               width={200}
               height={200}
+              priority={false}
+              unoptimized
             />
           )}
         </div>
@@ -109,7 +111,7 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
               onChange={handleChangeExternalReferenceUrl}
             />
           </section>
-          <section className="flex flex-1 flex-col py-2 ml-1">
+          <section className="flex flex-1 flex-col py-2 ml-1 overflow-x-hidden">
             <Label>Preview</Label>
             {post_sections_state.post_sections.map((section, index) => (
               <React.Fragment key={`writing_section_index_${index}`}>
@@ -122,11 +124,13 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
                   onClickDelete={handleClickDeleteSectionButton(index)}
                   externalReference={section.external_reference_url}
                 />
-                <CategorySelector
-                  state={section.category_state}
-                  handleClickCategoryToggle={handleClickCategoryToggle}
-                  handleChangeCategoryInput={handleChangeCategoryInput}
-                />
+                {post_sections_state.current_index === index && (
+                  <CategorySelector
+                    state={section.category_state}
+                    handleClickCategoryToggle={handleClickCategoryToggle}
+                    handleChangeCategoryInput={handleChangeCategoryInput}
+                  />
+                )}
               </React.Fragment>
             ))}
             <Button variant={'outline'} onClick={handleClickPlusButton}>

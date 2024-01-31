@@ -20,14 +20,13 @@ export default function CategorySelector({
     <>
       <Label htmlFor="category">Category</Label>
       <div className="flex flex-row my-4">
-        <div className="flex flex-1 flex-row items-center gap-1.5">
+        <div className="flex flex-1 flex-row items-center gap-1.5 overflow-scroll max-w-full">
           <Input
             type="text"
             id="category"
             value={state.input}
             onChange={handleChangeCategoryInput}
           />
-          <Button variant="outline">Search</Button>
         </div>
       </div>
       <div className="flex flex-row overflow-scroll max-w-full gap-2">

@@ -17,5 +17,5 @@ export default async function WriteBlogPost() {
     redirect('/');
   }
 
-  return <Writer postingType={'blog'} />;
+  return <Writer posting_type={'blog'} />;
 }

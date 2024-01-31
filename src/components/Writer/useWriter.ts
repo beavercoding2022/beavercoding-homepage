@@ -13,6 +13,7 @@ import {
   PostingType,
   createUseWriterInitialState,
   initialModalstate,
+  initialPostSection,
   useWriterSliceCreatorFn,
 } from '@/src/components/Writer/useWriter.slice';
 
@@ -43,38 +44,6 @@ export default function useWriter(props: UseWriterProps) {
     createUseWriterInitialState(props),
   );
 
-  React.useEffect(() => {
-    // TODO: Fix this not using useEffect; use else
-    const input =
-      state.post_sections_state.post_sections[
-        state.post_sections_state.current_index
-      ].category_state.input;
-
-    if (input.length === 0) {
-      supabase
-        .from('categories')
-        .select('*')
-        .then(({ data }) => {
-          dispatch(slice.actions.setCategoriesSearched(data || []));
-        });
-    }
-
-    if (input.length > 0) {
-      supabase
-        .from('categories')
-        .select('*')
-        .ilike('name', `%${input}%`)
-        .then(({ data }) => {
-          dispatch(slice.actions.setCategoriesSearched(data || []));
-        });
-    }
-  }, [
-    slice.actions,
-    state.post_sections_state.current_index,
-    state.post_sections_state.post_sections,
-    supabase,
-  ]);
-
   const handleChangeTitle: React.ChangeEventHandler<HTMLInputElement> =
     React.useCallback(
       (e) => {
@@ -95,15 +64,6 @@ export default function useWriter(props: UseWriterProps) {
 
   const handleUploadImage = React.useCallback(
     async (image: File) => {
-      setIsLoading(true);
-      if (state.title === '') {
-        setModal({
-          isOpen: true,
-          message: 'The title is empty',
-        });
-        throw new Error('The title is empty');
-      }
-
       const { data, error } = await supabase.storage
         .from('images')
         .upload(`${props.posting_type}/${state.slug}/${image.name}`, image, {
@@ -133,7 +93,7 @@ export default function useWriter(props: UseWriterProps) {
 
       return newPublicUrl;
     },
-    [props.posting_type, state.slug, state.title, supabase.storage],
+    [props.posting_type, state.slug, supabase.storage],
   );
 
   const handleUploadThumbnail: React.ChangeEventHandler<HTMLInputElement> =
@@ -146,6 +106,9 @@ export default function useWriter(props: UseWriterProps) {
             message: 'The title is empty',
           });
           dispatch(slice.actions.removeThumbnail());
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
           return;
         }
 
@@ -179,18 +142,41 @@ export default function useWriter(props: UseWriterProps) {
 
   const handleClickPlusButton = React.useCallback(() => {
     dispatch(slice.actions.addNewSection());
+    editorRef.current &&
+      editorRef.current.setMarkdown(initialPostSection.content);
+    editorRef.current?.focus();
   }, [slice.actions]);
 
   const handleChangeCategoryInput: React.ChangeEventHandler<HTMLInputElement> =
     React.useCallback(
       (e) => {
+        const currentCategoryInput = e.target.value;
         dispatch(
           slice.actions.setCategoryInput({
-            input: e.target.value,
+            input: currentCategoryInput,
           }),
         );
+
+        if (currentCategoryInput.length === 0) {
+          supabase
+            .from('categories')
+            .select('*')
+            .then(({ data }) => {
+              dispatch(slice.actions.setCategoriesSearched(data || []));
+            });
+        }
+
+        if (currentCategoryInput.length > 0) {
+          supabase
+            .from('categories')
+            .select('*')
+            .ilike('name', `%${currentCategoryInput}%`)
+            .then(({ data }) => {
+              dispatch(slice.actions.setCategoriesSearched(data || []));
+            });
+        }
       },
-      [slice.actions],
+      [slice.actions, supabase],
     );
 
   const handleClickCategoryToggle: (
