@@ -19,6 +19,18 @@ export default function CategorySelector({
   const [supabase] = React.useState(() => createPagesBrowserClient<Database>());
 
   React.useEffect(() => {
+    if (state.inputCategory.length === 0) {
+      supabase
+        .from('categories')
+        .select('*')
+        .then(({ data }) => {
+          setState((prev) => ({
+            ...prev,
+            searchedCategories: data || [],
+          }));
+        });
+    }
+
     if (state.inputCategory.length > 0) {
       supabase
         .from('categories')
