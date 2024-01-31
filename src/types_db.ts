@@ -318,6 +318,7 @@ export interface Database {
           content: string
           external_reference_url: string | null
           id: number
+          image_paths: string[]
           post_id: number
           section_order: number
           user_id: string
@@ -326,6 +327,7 @@ export interface Database {
           content: string
           external_reference_url?: string | null
           id?: never
+          image_paths?: string[]
           post_id: number
           section_order?: number
           user_id?: string
@@ -334,6 +336,7 @@ export interface Database {
           content?: string
           external_reference_url?: string | null
           id?: never
+          image_paths?: string[]
           post_id?: number
           section_order?: number
           user_id?: string
@@ -393,6 +396,7 @@ export interface Database {
           category_id: number | null
           created_at: string
           id: number
+          image_paths: string[] | null
           posting_type: Database["public"]["Enums"]["posting_type"] | null
           public: boolean
           slug: string
@@ -406,6 +410,7 @@ export interface Database {
           category_id?: number | null
           created_at?: string
           id?: never
+          image_paths?: string[] | null
           posting_type?: Database["public"]["Enums"]["posting_type"] | null
           public: boolean
           slug: string
@@ -419,6 +424,7 @@ export interface Database {
           category_id?: number | null
           created_at?: string
           id?: never
+          image_paths?: string[] | null
           posting_type?: Database["public"]["Enums"]["posting_type"] | null
           public?: boolean
           slug?: string
