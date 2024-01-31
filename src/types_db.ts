@@ -358,6 +358,30 @@ export interface Database {
           }
         ]
       }
+      post_series: {
+        Row: {
+          created_at: string
+          id: number
+          slug: string
+          thumbnail_url: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          slug: string
+          thumbnail_url?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          slug?: string
+          thumbnail_url?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       post_tags: {
         Row: {
           id: number
@@ -399,6 +423,7 @@ export interface Database {
           image_paths: string[]
           posting_type: Database["public"]["Enums"]["posting_type"] | null
           public: boolean
+          series_id: number | null
           slug: string
           team_id: number | null
           thumbnail_url: string | null
@@ -413,6 +438,7 @@ export interface Database {
           image_paths?: string[]
           posting_type?: Database["public"]["Enums"]["posting_type"] | null
           public: boolean
+          series_id?: number | null
           slug: string
           team_id?: number | null
           thumbnail_url?: string | null
@@ -427,6 +453,7 @@ export interface Database {
           image_paths?: string[]
           posting_type?: Database["public"]["Enums"]["posting_type"] | null
           public?: boolean
+          series_id?: number | null
           slug?: string
           team_id?: number | null
           thumbnail_url?: string | null
@@ -440,6 +467,13 @@ export interface Database {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "post_series"
             referencedColumns: ["id"]
           },
           {
