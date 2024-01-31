@@ -19,6 +19,7 @@ export default function SingleBlog({ post, postSections }: SingleBlogProps) {
           alt={post.title}
           width={300}
           height={300}
+          unoptimized
         />
       )}
       {post.categories.map((category) => (
@@ -33,6 +34,12 @@ export default function SingleBlog({ post, postSections }: SingleBlogProps) {
           className="border my-2 p-2"
         >
           <MDXRemote source={section.content} />
+          {section.categories.map((category) => (
+            <CategoryIcon
+              key={`section_${section.id}_categories_${category.id}`}
+              {...category}
+            />
+          ))}
         </div>
       ))}
     </>

@@ -113,7 +113,7 @@ export async function getPostSectionsBySlug(
   const supabase = createServerSupabaseClient();
   const getDataQuery = supabase
     .from('post_sections')
-    .select(`*, posts!inner(*)`)
+    .select(`*, posts!inner(*), categories!post_section_categories!inner (*)`)
     .eq('posts.slug', slug);
 
   const { data, error } = await getDataQuery;

@@ -81,6 +81,7 @@ export default function PortfolioList({
                   alt={post.title}
                   width={300}
                   height={300}
+                  unoptimized
                 />
               ) : (
                 <p>No Image</p>
