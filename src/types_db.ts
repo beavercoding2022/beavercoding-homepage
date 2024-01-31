@@ -396,7 +396,7 @@ export interface Database {
           category_id: number | null
           created_at: string
           id: number
-          image_paths: string[] | null
+          image_paths: string[]
           posting_type: Database["public"]["Enums"]["posting_type"] | null
           public: boolean
           slug: string
@@ -410,7 +410,7 @@ export interface Database {
           category_id?: number | null
           created_at?: string
           id?: never
-          image_paths?: string[] | null
+          image_paths?: string[]
           posting_type?: Database["public"]["Enums"]["posting_type"] | null
           public: boolean
           slug: string
@@ -424,7 +424,7 @@ export interface Database {
           category_id?: number | null
           created_at?: string
           id?: never
-          image_paths?: string[] | null
+          image_paths?: string[]
           posting_type?: Database["public"]["Enums"]["posting_type"] | null
           public?: boolean
           slug?: string
