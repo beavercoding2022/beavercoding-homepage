@@ -7,8 +7,8 @@ export type SectionProps = {
   currentIndex: number;
   renderingIndex: number;
   length: number;
-  onClickEdit: () => void;
-  onClickDelete: () => void;
+  onClickEdit: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  onClickDelete: React.MouseEventHandler<HTMLButtonElement> | undefined;
   externalReference: string | null;
 };
 
@@ -25,22 +25,12 @@ export default function Section({
     <div className="relative border-2 my-2 p-2 min-h-[25px]">
       <div className="absolute top-0 right-0">
         {currentIndex !== renderingIndex && (
-          <Button
-            variant={'outline'}
-            onClick={() => {
-              onClickEdit();
-            }}
-          >
+          <Button variant={'outline'} onClick={onClickEdit}>
             Edit
           </Button>
         )}
         {length > 1 && (
-          <Button
-            variant={'outline'}
-            onClick={() => {
-              onClickDelete();
-            }}
-          >
+          <Button variant={'outline'} onClick={onClickDelete}>
             Delete
           </Button>
         )}

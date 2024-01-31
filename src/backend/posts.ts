@@ -28,6 +28,33 @@ export async function getPosts(
   return data;
 }
 
+export async function getFullPost(
+  slug: Database['public']['Tables']['posts']['Row']['slug'],
+  postingType: NonNullable<
+    Database['public']['Tables']['posts']['Row']['posting_type']
+  >,
+) {
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from('posts')
+    .select(
+      `*, 
+      categories!post_categories (*), 
+      post_sections!inner (
+        *,
+        categories!post_section_categories!inner (*)
+      )
+      `,
+    )
+    .eq('slug', slug)
+    .eq('posting_type', postingType)
+    .single();
+  if (error) {
+    throw error;
+  }
+  return data;
+}
+
 export async function getPost(
   slug: Database['public']['Tables']['posts']['Row']['slug'],
   postingType: NonNullable<
