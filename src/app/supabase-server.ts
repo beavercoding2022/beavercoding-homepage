@@ -7,6 +7,20 @@ export const createServerSupabaseClient = cache(() =>
   createServerComponentClient<Database>({ cookies }),
 );
 
+export async function getUser() {
+  const supabase = createServerSupabaseClient();
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    return user;
+  } catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+}
+
 export async function getSession() {
   const supabase = createServerSupabaseClient();
   try {

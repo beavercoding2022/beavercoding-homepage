@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import CategorySelector from '@/src/components/Writer/CategorySelector';
-import WritingSection from '@/src/components/Writer/Section';
+import Section from '@/src/components/Writer/Section';
 import useWriter, { UseWriterProps } from '@/src/components/Writer/useWriter';
 import { ForwardRefEditor } from '@/src/components/ui/Editor/ForwardedEditor';
 
@@ -110,7 +110,8 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
               onChange={handleUploadThumbnail}
               ref={fileInputRef}
             />
-            <button
+            <Button
+              variant={'outline'}
               onClick={() => {
                 if (fileInputRef.current) {
                   fileInputRef.current.files = null;
@@ -119,7 +120,7 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
               }}
             >
               Remove
-            </button>
+            </Button>
             {thumbnail_url && (
               <Image
                 src={thumbnail_url}
@@ -166,8 +167,10 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
             <Label>Preview</Label>
             {post_sections_state.post_sections.map((section, index) => (
               <React.Fragment key={`writing_section_index_${index}`}>
-                <WritingSection
+                <Section
                   markdown={section.content}
+                  prevMode={section.prevMode}
+                  nextMode={section.nextMode}
                   length={post_sections_state.post_sections.length}
                   currentIndex={post_sections_state.current_index}
                   renderingIndex={index}

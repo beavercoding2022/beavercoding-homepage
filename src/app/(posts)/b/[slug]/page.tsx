@@ -1,23 +1,29 @@
 import SingleBlog from '@/src/app/(posts)/b/SingleBlog';
-import {
-  getAllPostSeries,
-  getPost,
-  getPostSectionsBySlug,
-} from '@/src/backend/posts';
+import { getUser } from '@/src/app/supabase-server';
+import { getPost, getPostSectionsBySlug } from '@/src/backend/posts';
 import CustomLink from '@/src/components/ui/CustomLink';
+import pathMapper from '@/src/utils/pathMapper';
+import { revalidatePath } from 'next/cache';
 import { notFound } from 'next/navigation';
 
 export default async function BlogPost({
   params,
+  searchParams,
 }: {
   params: { slug: string };
+  searchParams: { mode?: 'edit' };
 }) {
   // 한글 지원
-  const lastSlug = decodeURIComponent(params.slug);
+  const decodedSlug = decodeURIComponent(params.slug);
+  if (searchParams.mode === 'edit') {
+    revalidatePath(pathMapper('blog', decodedSlug));
+  }
+
   try {
-    const [post, postSections] = await Promise.all([
-      getPost(lastSlug, 'blog'),
-      getPostSectionsBySlug(lastSlug),
+    const [post, postSections, user] = await Promise.all([
+      getPost(decodedSlug, 'blog'),
+      getPostSectionsBySlug(decodedSlug),
+      getUser(),
     ]);
 
     if (!post) {
@@ -26,6 +32,15 @@ export default async function BlogPost({
 
     return (
       <>
+        {user && (
+          <CustomLink
+            prefetch={false}
+            href={`${pathMapper('blog', decodedSlug)}/edit`}
+            shallow={true}
+          >
+            Edit
+          </CustomLink>
+        )}
         <div className="p-2">
           <SingleBlog post={post} postSections={postSections} />
         </div>

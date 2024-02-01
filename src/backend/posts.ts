@@ -42,9 +42,9 @@ export async function getFullPost(
       categories!post_categories (*), 
       post_sections!inner (
         *,
-        categories!post_section_categories!inner (*)
+        categories!post_section_categories (*)
       ),
-      post_series!inner (*)
+      post_series (*)
       `,
     )
     .eq('slug', slug)

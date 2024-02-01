@@ -17,6 +17,7 @@ import {
   useWriterSliceCreatorFn,
 } from '@/src/components/Writer/useWriter.slice';
 import { SelectProps } from '@radix-ui/react-select';
+import { revalidatePath } from 'next/cache';
 
 export type UseWriterProps = {
   posting_type: NonNullable<PostingType>;
@@ -69,7 +70,6 @@ export default function useWriter(props: UseWriterProps) {
             .from('post_series')
             .select('*')
             .then(({ data }) => {
-              console.log(data);
               dispatch(slice.actions.setSearchedSeries(data || []));
             });
         }
@@ -108,7 +108,6 @@ export default function useWriter(props: UseWriterProps) {
     async (image: File) => {
       const imageNameUuid = uuidv4();
       const path = `${props.posting_type}/${state.uuid}/${imageNameUuid}`;
-      console.log(path);
 
       const { data, error } = await supabase.storage
         .from('images')
@@ -120,7 +119,7 @@ export default function useWriter(props: UseWriterProps) {
       if (error) {
         setModal({
           isOpen: true,
-          message: error.message,
+          message: 'Upload Image Error: ' + error.message,
         });
         throw error;
       }
@@ -132,14 +131,14 @@ export default function useWriter(props: UseWriterProps) {
       if (!newPublicUrl) {
         setModal({
           isOpen: true,
-          message: 'The image path is empty',
+          message: 'Fetching Image Error: The image path is empty',
         });
         throw new Error('The image path is empty');
       }
 
       return newPublicUrl;
     },
-    [props.posting_type, state.slug, supabase.storage],
+    [props.posting_type, state.uuid, supabase.storage],
   );
 
   const handleUploadThumbnail: React.ChangeEventHandler<HTMLInputElement> =
@@ -149,7 +148,7 @@ export default function useWriter(props: UseWriterProps) {
         if (state.title === '') {
           setModal({
             isOpen: true,
-            message: 'The title is empty',
+            message: 'Before Upload Error: The title is empty',
           });
           dispatch(slice.actions.removeThumbnail());
           if (fileInputRef.current) {
@@ -163,7 +162,8 @@ export default function useWriter(props: UseWriterProps) {
         if (!file) {
           setModal({
             isOpen: true,
-            message: 'The file is not selected',
+            message:
+              'Before Upload Error: The file in the input is not selected',
           });
           return;
         }
@@ -189,8 +189,7 @@ export default function useWriter(props: UseWriterProps) {
 
   const handleClickPlusButton = React.useCallback(() => {
     dispatch(slice.actions.addNewSection());
-    editorRef.current &&
-      editorRef.current.setMarkdown(initialPostSection.content);
+    editorRef.current?.setMarkdown(initialPostSection.content);
     editorRef.current?.focus();
   }, [slice.actions]);
 
@@ -252,8 +251,11 @@ export default function useWriter(props: UseWriterProps) {
   ) => React.MouseEventHandler<HTMLButtonElement> = React.useCallback(
     (index: number) => (e) => {
       dispatch(slice.actions.setCurrentSectionEdit({ index }));
+      editorRef.current?.setMarkdown(
+        state.post_sections_state.post_sections[index].content,
+      );
     },
-    [slice.actions],
+    [slice.actions, state.post_sections_state.post_sections],
   );
 
   const handleClickDeleteSectionButton: (
@@ -269,7 +271,7 @@ export default function useWriter(props: UseWriterProps) {
     // 이걸 useMemo로 빼는것도 고려해 볼 것. 왜냐면 업로드 하기 전에 보이는 postSection이 요거임.
     const sectionsWithSelectedCategories =
       state.post_sections_state.post_sections
-        .filter((section) => section.mode !== 'delete')
+        .filter((section) => section.nextMode !== 'delete')
         .map((section, sectionIndex) => ({
           ...section,
           section_order: sectionIndex,
@@ -371,7 +373,7 @@ export default function useWriter(props: UseWriterProps) {
 
   const handleUpdate = React.useCallback(async () => {
     const sections = state.post_sections_state.post_sections
-      .filter((section) => section.mode !== 'delete')
+      .filter((section) => section.nextMode !== 'delete')
       .map((section, sectionIndex) => ({
         ...section,
         section_order: sectionIndex, // re-order
@@ -390,6 +392,7 @@ export default function useWriter(props: UseWriterProps) {
         image_paths: state.image_paths,
         public: true,
       })
+      .eq('id', props.post!.id) // in edit mode, props.post?.id is not null
       .select()
       .single();
 
@@ -441,7 +444,7 @@ export default function useWriter(props: UseWriterProps) {
     }
 
     const postSectionsToBeInserted = sections
-      .filter((section) => section.mode === 'create')
+      .filter((section) => section.nextMode === 'create')
       .map((section) => ({
         section_order: section.section_order,
         post_id: postData.id,
@@ -451,38 +454,41 @@ export default function useWriter(props: UseWriterProps) {
         categories: section.categories,
       }));
 
-    const promises = postSectionsToBeInserted.map(async (section) => {
-      const { data: postSectionData, error: postSectionsError } = await supabase
-        .from('post_sections')
-        .insert(section)
-        .select()
-        .single();
+    const promises = postSectionsToBeInserted.map(
+      async ({ categories, ...section }) => {
+        const { data: postSectionData, error: postSectionsError } =
+          await supabase
+            .from('post_sections')
+            .insert(section)
+            .select()
+            .single();
 
-      if (postSectionsError) {
-        throw { ...postSectionsError, cause: 'insert post_sections' };
-      }
+        if (postSectionsError) {
+          throw { ...postSectionsError, cause: 'insert post_sections' };
+        }
 
-      const { error: postSectionCategoryError } = await supabase
-        .from('post_section_categories')
-        .insert(
-          section.categories.map((category) => ({
-            post_section_id: postSectionData.id,
-            category_id: category.id!,
-          })),
-        );
+        const { error: postSectionCategoryError } = await supabase
+          .from('post_section_categories')
+          .insert(
+            categories.map((category) => ({
+              post_section_id: postSectionData.id,
+              category_id: category.id!,
+            })),
+          );
 
-      if (postSectionCategoryError) {
-        throw {
-          ...postSectionCategoryError,
-          cause: 'insert post_section_categories',
-        };
-      }
-    });
+        if (postSectionCategoryError) {
+          throw {
+            ...postSectionCategoryError,
+            cause: 'insert post_section_categories',
+          };
+        }
+      },
+    );
 
     await Promise.all(promises);
 
     const postSectionsToBeUpdated = sections
-      .filter((section) => section.mode === 'edit')
+      .filter((section) => section.nextMode === 'edit')
       .map((section) => ({
         id: section.id!,
         section_order: section.section_order,
@@ -491,7 +497,7 @@ export default function useWriter(props: UseWriterProps) {
         image_paths: section.image_paths,
         categories: section.categories,
       }))
-      .map(async ({ id, ...section }) => {
+      .map(async ({ id, categories, ...section }) => {
         const { error: updatePostSectionError } = await supabase
           .from('post_sections')
           .update(section)
@@ -506,7 +512,7 @@ export default function useWriter(props: UseWriterProps) {
           .delete()
           .in(
             'category_id',
-            section.categories.map((category) => category.isDeletedInEditMode),
+            categories.map((category) => category.isDeletedInEditMode),
           );
 
         if (deletePostSectionCategoriesError) {
@@ -519,7 +525,7 @@ export default function useWriter(props: UseWriterProps) {
         const { error: insertPostSectionCategoriesError } = await supabase
           .from('post_section_categories')
           .insert(
-            section.categories
+            categories
               .filter((category) => category.isAddedInEditMode)
               .map((category) => ({
                 post_section_id: id,
@@ -537,7 +543,7 @@ export default function useWriter(props: UseWriterProps) {
     await Promise.all(postSectionsToBeUpdated);
 
     const postSectionIdsToBeDeleted = sections
-      .filter((section) => section.mode === 'delete')
+      .filter((section) => section.nextMode === 'delete')
       .map((section) => section.id!);
 
     const { error: deletePostSectionError } = await supabase
@@ -561,8 +567,9 @@ export default function useWriter(props: UseWriterProps) {
       };
     }
 
-    push(pathMapper(props.posting_type, state.slug));
+    push(`${pathMapper(props.posting_type, state.slug)}?mode=edit`);
   }, [
+    props.post,
     props.posting_type,
     push,
     state.image_paths,
@@ -579,7 +586,7 @@ export default function useWriter(props: UseWriterProps) {
       if (state.title === '') {
         setModal({
           isOpen: true,
-          message: 'The title is empty',
+          message: 'Before Save Error: The title is empty',
         });
         return;
       }
@@ -596,7 +603,10 @@ export default function useWriter(props: UseWriterProps) {
       } catch (error) {
         setModal({
           isOpen: true,
-          message: (error as Error)?.message ?? 'Unknown Error',
+          message:
+            (error as Error)?.cause +
+            ': ' +
+            ((error as Error)?.message ?? 'Unknown Error'),
         });
       } finally {
         setIsLoading(false);

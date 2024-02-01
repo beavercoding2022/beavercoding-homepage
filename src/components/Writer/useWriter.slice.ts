@@ -19,7 +19,8 @@ export type PostSectionInsideState = OmitAndPartial<
   PostSection,
   'id' | 'user_id' | 'section_order' | 'post_id'
 > & {
-  mode: 'create' | 'edit' | 'delete' | 'not_edited';
+  prevMode: 'create' | 'edit' | 'delete' | 'not_edited';
+  nextMode: 'create' | 'edit' | 'delete' | 'not_edited';
   category_state: CategoryState;
 };
 
@@ -47,7 +48,8 @@ export const initialPostSection: PostSectionState['post_sections'][number] = {
   external_reference_url: null,
   image_paths: [],
   category_state: initialCategoryState,
-  mode: 'create',
+  prevMode: 'create',
+  nextMode: 'create',
   categories: [],
 };
 
@@ -120,7 +122,8 @@ export function createUseWriterInitialState(
                 })),
               },
               categories: section.categories,
-              mode: 'edit',
+              prevMode: 'not_edited',
+              nextMode: 'not_edited',
             }) satisfies PostSectionInsideState,
         ),
         current_index: 0,
@@ -204,28 +207,58 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
         state.post_sections_state.post_sections[action.payload.index].content =
           action.payload.content;
         if (state.mode === 'edit') {
-          state.post_sections_state.post_sections[action.payload.index].mode =
-            'edit';
+          state.post_sections_state.post_sections[
+            action.payload.index
+          ].nextMode = 'edit';
         }
       },
       addNewSection(state) {
         if (
           state.post_sections_state.post_sections[
             state.post_sections_state.current_index
-          ].content === initialPostSection.content
+          ].content.length === 0
         ) {
           return;
         }
         state.post_sections_state.post_sections.push({
           ...initialPostSection,
-          mode: 'create',
+          nextMode: 'create',
         });
         state.post_sections_state.current_index =
           state.post_sections_state.post_sections.length - 1;
       },
       deleteSection(state, action: PayloadAction<{ index: number }>) {
-        state.post_sections_state.post_sections[action.payload.index].mode =
-          'delete';
+        const prevSectionMode =
+          state.post_sections_state.post_sections[action.payload.index]
+            .prevMode;
+        const nextSectionMode =
+          state.post_sections_state.post_sections[action.payload.index]
+            .nextMode;
+        const mode = state.mode;
+
+        if (mode === 'create' && nextSectionMode === 'delete') {
+          state.post_sections_state.post_sections[
+            action.payload.index
+          ].nextMode = prevSectionMode; // revert to prevMode
+        }
+
+        if (mode === 'create' && nextSectionMode !== 'delete') {
+          state.post_sections_state.post_sections[
+            action.payload.index
+          ].nextMode = 'delete'; // just delete it
+        }
+
+        if (mode === 'edit' && nextSectionMode === 'delete') {
+          state.post_sections_state.post_sections[
+            action.payload.index
+          ].nextMode = prevSectionMode; // revert to prevMode
+        }
+
+        if (mode === 'edit' && prevSectionMode !== 'delete') {
+          state.post_sections_state.post_sections[
+            action.payload.index
+          ].nextMode = 'delete'; // just delete it
+        }
       },
       updateCurrentSectionExternalReferenceUrl(
         state,
@@ -239,7 +272,7 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
         if (state.mode === 'edit') {
           state.post_sections_state.post_sections[
             state.post_sections_state.current_index
-          ].mode = 'edit';
+          ].prevMode = 'edit';
         }
       },
       updateCurrentSectionImagePaths(
@@ -264,8 +297,9 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
         }
 
         if (state.mode === 'edit') {
-          state.post_sections_state.post_sections[action.payload.index].mode =
-            'edit';
+          state.post_sections_state.post_sections[
+            action.payload.index
+          ].prevMode = 'edit';
         }
       },
       removeCurrentSectionImagePath(
@@ -286,8 +320,9 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
         );
 
         if (state.mode === 'edit') {
-          state.post_sections_state.post_sections[action.payload.index].mode =
-            'edit';
+          state.post_sections_state.post_sections[
+            action.payload.index
+          ].prevMode = 'edit';
         }
       },
       setCurrentSectionEdit(state, action: PayloadAction<{ index: number }>) {

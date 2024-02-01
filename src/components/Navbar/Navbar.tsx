@@ -1,12 +1,9 @@
-import { createServerSupabaseClient } from '@/src/app/supabase-server';
-import SignOutButton from './SignOutButton';
+import { getUser } from '@/src/app/supabase-server';
 import CustomLink from '@/src/components/ui/CustomLink';
+import SignOutButton from './SignOutButton';
 
 export default async function Navbar() {
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   return (
     <nav className="top-0 z-40 transition-all duration-150">
