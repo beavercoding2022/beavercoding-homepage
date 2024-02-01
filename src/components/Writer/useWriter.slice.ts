@@ -63,7 +63,12 @@ export const initialModalstate: { isOpen: boolean; message: string } = {
 
 type UseWriterState = {
   title: string;
+  uuid: string; // for image file name path. if the slug is not alphabet, supabase will reject it.
   slug: string;
+  series_slug: string | null;
+  searchedSeries: (NonNullable<Post['post_series']> & {
+    isSelected?: boolean;
+  })[];
   posting_type: NonNullable<PostingType>;
   thumbnail_url: string | null;
   post_sections_state: PostSectionState;
@@ -73,8 +78,11 @@ type UseWriterState = {
 
 const initialState: UseWriterState = {
   title: '',
-  thumbnail_url: null,
+  uuid: '',
   slug: '',
+  series_slug: null,
+  searchedSeries: [],
+  thumbnail_url: null,
   posting_type: 'blog',
   mode: 'create',
   post_sections_state: initialPostSectionState,
@@ -141,10 +149,47 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
           sluggify(action.payload.title) +
           '-' +
           action.payload.uuid.slice(0, 8);
+        state.uuid = action.payload.uuid;
       },
-      setThumbnail(state, action: PayloadAction<string>) {
+      setSeriesSlug(
+        state,
+        action: PayloadAction<UseWriterState['series_slug']>,
+      ) {
+        state.series_slug = action.payload;
+      },
+      setSearchedSeries(
+        state,
+        action: PayloadAction<UseWriterState['searchedSeries']>,
+      ) {
+        state.searchedSeries = action.payload;
+      },
+      setSelectSearchedSeries(
+        state,
+        action: PayloadAction<UseWriterState['searchedSeries'][number]['id']>,
+      ) {
+        state.searchedSeries = state.searchedSeries.map((series) => {
+          if (series.id === action.payload) {
+            state.series_slug = series.slug;
+            return {
+              ...series,
+              isSelected: !series.isSelected,
+            };
+          }
+
+          return {
+            ...series,
+            isSelected: false,
+          };
+        });
+      },
+      setThumbnail(
+        state,
+        action: PayloadAction<UseWriterState['thumbnail_url']>,
+      ) {
         state.thumbnail_url = action.payload;
-        state.image_paths.push(action.payload);
+        if (action.payload) {
+          state.image_paths.push(action.payload);
+        }
       },
       removeThumbnail(state) {
         state.thumbnail_url = null;

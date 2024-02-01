@@ -43,7 +43,8 @@ export async function getFullPost(
       post_sections!inner (
         *,
         categories!post_section_categories!inner (*)
-      )
+      ),
+      post_series!inner (*)
       `,
     )
     .eq('slug', slug)
@@ -113,7 +114,7 @@ export async function getPostSectionsBySlug(
   const supabase = createServerSupabaseClient();
   const getDataQuery = supabase
     .from('post_sections')
-    .select(`*, posts!inner(*), categories!post_section_categories!inner (*)`)
+    .select(`*, posts!inner(*), categories!post_section_categories (*)`)
     .eq('posts.slug', slug);
 
   const { data, error } = await getDataQuery;
@@ -182,4 +183,14 @@ export async function getValidCategories(
   }));
 
   return result;
+}
+
+export async function getAllPostSeries() {
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase.from('post_series').select('*');
+
+  if (error) {
+    throw error;
+  }
+  return data;
 }

@@ -16,6 +16,7 @@ import {
   initialPostSection,
   useWriterSliceCreatorFn,
 } from '@/src/components/Writer/useWriter.slice';
+import { SelectProps } from '@radix-ui/react-select';
 
 export type UseWriterProps = {
   posting_type: NonNullable<PostingType>;
@@ -57,6 +58,47 @@ export default function useWriter(props: UseWriterProps) {
       [id, slice.actions],
     );
 
+  const handleChangeSeriesSlug: React.ChangeEventHandler<HTMLInputElement> =
+    React.useCallback(
+      (e) => {
+        const seriesSlug = e.target.value;
+
+        dispatch(slice.actions.setSeriesSlug(seriesSlug));
+        if (seriesSlug.length === 0) {
+          supabase
+            .from('post_series')
+            .select('*')
+            .then(({ data }) => {
+              console.log(data);
+              dispatch(slice.actions.setSearchedSeries(data || []));
+            });
+        }
+
+        if (seriesSlug.length > 0) {
+          supabase
+            .from('post_series')
+            .select('*')
+            .ilike('slug', `%${seriesSlug}%`)
+            .then(({ data }) => {
+              dispatch(slice.actions.setSearchedSeries(data || []));
+            });
+        }
+      },
+      [slice.actions, supabase],
+    );
+  const handleSeriesSelectValueChange: SelectProps['onValueChange'] =
+    React.useCallback(
+      (value: string) => {
+        const numId = parseInt(value, 10);
+        if (isNaN(numId)) {
+          return;
+        }
+
+        dispatch(slice.actions.setSelectSearchedSeries(numId));
+      },
+      [slice.actions],
+    );
+
   const handleClickModalClose: React.MouseEventHandler<HTMLButtonElement> =
     React.useCallback(() => {
       setModal(initialModalstate);
@@ -64,9 +106,13 @@ export default function useWriter(props: UseWriterProps) {
 
   const handleUploadImage = React.useCallback(
     async (image: File) => {
+      const imageNameUuid = uuidv4();
+      const path = `${props.posting_type}/${state.uuid}/${imageNameUuid}`;
+      console.log(path);
+
       const { data, error } = await supabase.storage
         .from('images')
-        .upload(`${props.posting_type}/${state.slug}/${image.name}`, image, {
+        .upload(path, image, {
           cacheControl: '3600',
           upsert: false,
         });
@@ -108,6 +154,7 @@ export default function useWriter(props: UseWriterProps) {
           dispatch(slice.actions.removeThumbnail());
           if (fileInputRef.current) {
             fileInputRef.current.value = '';
+            fileInputRef.current.files = null;
           }
           return;
         }
@@ -241,6 +288,8 @@ export default function useWriter(props: UseWriterProps) {
         thumbnail_url: state.thumbnail_url,
         posting_type: state.posting_type,
         image_paths: state.image_paths,
+        series_id: state.searchedSeries.filter((series) => series.isSelected)[0]
+          ?.id,
         public: true,
       })
       .select()
@@ -313,6 +362,7 @@ export default function useWriter(props: UseWriterProps) {
     state.image_paths,
     state.post_sections_state.post_sections,
     state.posting_type,
+    state.searchedSeries,
     state.slug,
     state.thumbnail_url,
     state.title,
@@ -565,6 +615,8 @@ export default function useWriter(props: UseWriterProps) {
     isLoading,
     handleChangeTitle,
     handleUploadThumbnail,
+    handleChangeSeriesSlug,
+    handleSeriesSelectValueChange,
     handleChangeMarkdown,
     handleClickModalClose,
     handleClickPlusButton,

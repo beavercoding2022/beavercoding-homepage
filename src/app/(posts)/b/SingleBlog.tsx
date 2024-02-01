@@ -20,6 +20,7 @@ export default function SingleBlog({ post, postSections }: SingleBlogProps) {
           width={300}
           height={300}
           unoptimized
+          priority={false}
         />
       )}
       {post.categories.map((category) => (

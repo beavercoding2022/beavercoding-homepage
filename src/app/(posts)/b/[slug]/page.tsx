@@ -1,8 +1,10 @@
 import SingleBlog from '@/src/app/(posts)/b/SingleBlog';
-import { getPost, getPostSectionsBySlug } from '@/src/backend/posts';
+import {
+  getAllPostSeries,
+  getPost,
+  getPostSectionsBySlug,
+} from '@/src/backend/posts';
 import CustomLink from '@/src/components/ui/CustomLink';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
 export default async function BlogPost({

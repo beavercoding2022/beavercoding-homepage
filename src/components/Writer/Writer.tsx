@@ -11,6 +11,15 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import CategorySelector from '@/src/components/Writer/CategorySelector';
 import WritingSection from '@/src/components/Writer/Section';
 import useWriter, { UseWriterProps } from '@/src/components/Writer/useWriter';
@@ -27,6 +36,8 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
     modal,
     isLoading,
     handleChangeTitle,
+    handleChangeSeriesSlug,
+    handleSeriesSelectValueChange,
     handleUploadThumbnail,
     handleChangeMarkdown,
     handleClickModalClose,
@@ -41,8 +52,15 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
     handleClickSaveButton,
   } = useWriter(props);
 
-  const { title, slug, thumbnail_url, post_sections_state, image_paths } =
-    state;
+  const {
+    title,
+    slug,
+    thumbnail_url,
+    post_sections_state,
+    image_paths,
+    searchedSeries,
+    series_slug,
+  } = state;
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -61,25 +79,58 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
           />
         </div>
         <p>slug: {slug}</p>
-
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="thumbnail">Thumbnail</Label>
-          <Input
-            id="thumbnail"
-            type="file"
-            onChange={handleUploadThumbnail}
-            ref={fileInputRef}
-          />
-          {thumbnail_url && (
-            <Image
-              src={thumbnail_url}
-              alt="thumbnail"
-              width={200}
-              height={200}
-              priority={false}
-              unoptimized
+        <div className="flex md:flex-row flex-col gap-1.5">
+          <div className="w-full items-center gap-1.5 my-2">
+            <Label htmlFor="series">Series</Label>
+            <Input
+              type="text"
+              id="series"
+              value={series_slug || ''}
+              onChange={handleChangeSeriesSlug}
             />
-          )}
+            <Select onValueChange={handleSeriesSelectValueChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Input a series slug" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={'empty'}>Null</SelectItem>
+                {searchedSeries.map((series) => (
+                  <SelectItem key={series.id} value={String(series.id)}>
+                    {series.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-full items-center gap-1.5 my-2">
+            <Label htmlFor="thumbnail">Thumbnail</Label>
+            <Input
+              id="thumbnail"
+              type="file"
+              onChange={handleUploadThumbnail}
+              ref={fileInputRef}
+            />
+            <button
+              onClick={() => {
+                if (fileInputRef.current) {
+                  fileInputRef.current.files = null;
+                  fileInputRef.current.value = '';
+                }
+              }}
+            >
+              Remove
+            </button>
+            {thumbnail_url && (
+              <Image
+                src={thumbnail_url}
+                alt="thumbnail"
+                width={200}
+                height={200}
+                priority={false}
+                unoptimized
+              />
+            )}
+          </div>
         </div>
 
         <div className="flex md:flex-row flex-col min-h-[500px]">
