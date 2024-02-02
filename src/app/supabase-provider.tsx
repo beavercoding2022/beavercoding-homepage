@@ -27,7 +27,6 @@ export default function SupabaseProvider({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
-      console.log(event);
       if (event === 'SIGNED_IN') {
         setIsSignedIn(true);
       }
