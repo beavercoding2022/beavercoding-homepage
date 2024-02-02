@@ -509,7 +509,9 @@ export default function useWriter(props: UseWriterProps) {
           .delete()
           .in(
             'category_id',
-            categories.map((category) => category.isDeletedInEditMode),
+            categories
+              .filter((category) => category.isDeletedInEditMode)
+              .map((cat) => cat.id!),
           );
 
         if (deletePostSectionCategoriesError) {

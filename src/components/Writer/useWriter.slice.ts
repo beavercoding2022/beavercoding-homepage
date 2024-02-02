@@ -222,6 +222,7 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
         }
         state.post_sections_state.post_sections.push({
           ...initialPostSection,
+          prevMode: 'create',
           nextMode: 'create',
         });
         state.post_sections_state.current_index =
@@ -343,17 +344,28 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
           state.post_sections_state.post_sections[
             state.post_sections_state.current_index
           ].category_state;
-        category_state.searched = action.payload.map((nextCat) => {
-          const prevCatIndex = category_state.searched.findIndex(
-            (prevCat) => prevCat.id === nextCat.id,
-          );
+        category_state.searched = [
+          ...category_state.searched.filter((cat) => cat?.isSelected),
+          ...action.payload.map((nextCat) => {
+            const prevCatIndex = category_state.searched.findIndex(
+              (prevCat) => prevCat.id === nextCat.id,
+            );
 
-          return {
-            ...nextCat,
-            isSelected:
-              category_state.searched[prevCatIndex]?.isSelected ?? false,
-          };
-        });
+            return {
+              ...nextCat,
+              isSelected:
+                category_state.searched[prevCatIndex]?.isSelected ?? false,
+            };
+          }),
+        ].reduce(
+          (acc, cur) => {
+            if (acc.findIndex((cat) => cat.id === cur.id) < 0) {
+              return [...acc, cur];
+            }
+            return acc;
+          },
+          [] as typeof category_state.searched,
+        );
       },
       toggleCategorySelected(state, action: PayloadAction<{ index: number }>) {
         const prev =
