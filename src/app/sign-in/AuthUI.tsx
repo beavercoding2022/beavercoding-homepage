@@ -1,32 +1,26 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { useSupabase } from '@/src/app/supabase-provider';
-import { getURL } from '@/src/utils/helpers';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 export default function AuthUI() {
   const { supabase } = useSupabase();
+
+  // https://supabase.com/docs/guides/auth/social-login/auth-github?language=js
+  async function signInWithGithub() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo: 'http://localhost:3000',
+      },
+    });
+  }
+
   return (
     <div className="flex flex-col space-y-4">
-      <Auth
-        supabaseClient={supabase}
-        providers={['github']}
-        redirectTo={`${getURL()}/auth/callback`}
-        magicLink={true}
-        appearance={{
-          theme: ThemeSupa,
-          variables: {
-            default: {
-              colors: {
-                brand: '#404040',
-                brandAccent: '#52525b',
-              },
-            },
-          },
-        }}
-        theme="dark"
-      />
+      <Button variant={'outline'} onClick={signInWithGithub}>
+        Sign In With Github
+      </Button>
     </div>
   );
 }
