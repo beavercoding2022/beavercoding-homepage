@@ -17,7 +17,7 @@ export default async function Index() {
       </div>
       <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
       <div className="flex flex-col mx-auto items-center">
-        <h1>Tech Stacks</h1>
+        <h1>Tech Stacks & Categories</h1>
         <HoverEffect items={categories} />
       </div>
     </header>
