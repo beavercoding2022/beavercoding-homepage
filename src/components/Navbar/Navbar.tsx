@@ -1,11 +1,9 @@
-'use client';
-
+import { getUser } from '@/src/app/supabase-server';
 import CustomLink from '@/src/components/ui/CustomLink';
 import SignOutButton from './SignOutButton';
-import { useSupabase } from '@/src/app/supabase-provider';
 
-export default function Navbar() {
-  const { isSignedIn } = useSupabase();
+export default async function Navbar() {
+  const user = await getUser();
 
   return (
     <nav className="top-0 z-40 transition-all duration-150">
@@ -26,7 +24,7 @@ export default function Navbar() {
             </nav>
           </div>
           <div className="flex justify-end space-x-8">
-            {isSignedIn ? (
+            {user ? (
               <>
                 <CustomLink href="/account">Account</CustomLink>
                 <SignOutButton />
@@ -45,7 +43,7 @@ export default function Navbar() {
         <CustomLink href="/d">Docs</CustomLink>
         <CustomLink href="/c">Categories</CustomLink>
         <CustomLink href="/s">Showcase</CustomLink>
-        {isSignedIn ? (
+        {user ? (
           <>
             <CustomLink href="/account">Account</CustomLink>
             <SignOutButton />
