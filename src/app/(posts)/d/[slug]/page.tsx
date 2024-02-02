@@ -1,5 +1,10 @@
+import SingleDocument from '@/src/app/(posts)/d/SingleDocument';
 import { getUser } from '@/src/app/supabase-server';
-import { getPost } from '@/src/backend/posts';
+import {
+  getPost,
+  getPostSections,
+  getPostSectionsBySlug,
+} from '@/src/backend/posts';
 import CustomLink from '@/src/components/ui/CustomLink';
 import pathMapper from '@/src/utils/pathMapper';
 import { revalidatePath } from 'next/cache';
@@ -19,8 +24,9 @@ export default async function DocPage({
   }
 
   try {
-    const [post, user] = await Promise.all([
+    const [post, postSections, user] = await Promise.all([
       getPost(decodedSlug, 'docs'),
+      getPostSectionsBySlug(decodedSlug),
       getUser(),
     ]);
 
@@ -36,8 +42,11 @@ export default async function DocPage({
           </CustomLink>
         )}
         <div className="p-2">
-          <h1>Doc Page</h1>
-          <pre>{JSON.stringify(post, null, 2)}</pre>
+          <SingleDocument
+            post={post}
+            postSections={postSections}
+            path={pathMapper('docs', decodedSlug)}
+          />
         </div>
         <CustomLink href="/d">Back to Document List</CustomLink>
       </>
