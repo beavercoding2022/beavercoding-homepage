@@ -1,13 +1,3 @@
-import { getFullPost } from '@/src/backend/posts';
-import { Database } from '@/src/types_db';
-import React from 'react';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { MDXEditorMethods } from '@mdxeditor/editor';
-import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
-import { EditorProps } from '@/src/components/ui/Editor/Editor';
-import pathMapper from '@/src/utils/pathMapper';
 import {
   Post,
   PostingType,
@@ -16,8 +6,15 @@ import {
   initialPostSection,
   useWriterSliceCreatorFn,
 } from '@/src/components/Writer/useWriter.slice';
+import { EditorProps } from '@/src/components/ui/Editor/Editor';
+import { Database } from '@/src/types_db';
+import pathMapper from '@/src/utils/pathMapper';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 import { SelectProps } from '@radix-ui/react-select';
-import { revalidatePath } from 'next/cache';
+import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
+import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export type UseWriterProps = {
   posting_type: NonNullable<PostingType>;

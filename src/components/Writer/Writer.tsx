@@ -70,7 +70,7 @@ export default function Writer(props: React.PropsWithChildren<UseWriterProps>) {
     <>
       <div className="my-2">
         <div className="w-full items-center gap-1.5">
-          <Label htmlFor="title">Title</Label>
+          <Label htmlFor="title">Title ({props.posting_type}) </Label>
           <Input
             type="text"
             id="title"

@@ -132,7 +132,7 @@ export function createUseWriterInitialState(
     };
   }
 
-  return initialState;
+  return { ...initialState, posting_type: props.posting_type || 'blog' };
 }
 
 export function useWriterSliceCreatorFn(props: UseWriterProps) {
