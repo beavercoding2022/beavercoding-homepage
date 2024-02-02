@@ -3,9 +3,11 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 
-export const createServerSupabaseClient = cache(() =>
-  createServerComponentClient<Database>({ cookies }),
-);
+export const createServerSupabaseClient = cache(() => {
+  // https://github.com/vercel/next.js/issues/56630#issuecomment-1756078597
+  cookies().getAll();
+  return createServerComponentClient<Database>({ cookies });
+});
 
 export async function getUser() {
   const supabase = createServerSupabaseClient();

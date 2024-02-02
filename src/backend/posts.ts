@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/src/backend/instance';
+import { createServerSupabaseClient } from '@/src/app/supabase-server';
 import { Database } from '@/src/types_db';
 
 export async function getPosts(
@@ -14,8 +14,8 @@ export async function getPosts(
   const { data, error } = await supabase
     .from('posts')
     .select(
-      `*, 
-      categories!post_categories (*), 
+      `*,
+      categories!post_categories (*),
       post_sections!inner (id, content)
       `,
     )
