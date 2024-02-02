@@ -58,6 +58,10 @@ export default function BlogList({
     }
   }, []);
 
+  if (posts.length === 0) {
+    return <div>No blog posts now.</div>;
+  }
+
   return (
     <InfiniteScroll
       hasMore={pages.hasMore}

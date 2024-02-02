@@ -58,6 +58,10 @@ export default function PortfolioList({
     }
   }, []);
 
+  if (posts.length === 0) {
+    return <p>No Portfolio now.</p>;
+  }
+
   return (
     <InfiniteScroll
       hasMore={pages.hasMore}
