@@ -2,18 +2,23 @@
 
 import { Button } from '@/components/ui/button';
 import { useSupabase } from '@/src/app/supabase-provider';
+import { getURL } from '@/src/utils/helpers';
+import { useRouter } from 'next/navigation';
 
 export default function AuthUI() {
   const { supabase } = useSupabase();
+  const { refresh } = useRouter();
 
   // https://supabase.com/docs/guides/auth/social-login/auth-github?language=js
   async function signInWithGithub() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: 'http://localhost:3000',
+        redirectTo: getURL(),
       },
     });
+
+    refresh();
   }
 
   return (

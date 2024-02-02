@@ -1,9 +1,6 @@
 import { getSession } from '@/src/app/supabase-server';
 import { redirect } from 'next/navigation';
 import AuthUI from './AuthUI';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/src/types_db';
-import { cookies } from 'next/headers';
 
 export default async function SignIn() {
   const session = await getSession();
