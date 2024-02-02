@@ -1,8 +1,7 @@
 import { getPost, getPostSectionsBySlug } from '@/src/backend/posts';
-import CategoryIcon from '@/src/components/icons/CategoryIcon';
 import CategoryLinkWithIcon from '@/src/components/icons/CategoryLinkWithIcon';
-import CustomLink from '@/src/components/ui/CustomLink';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import Image from 'next/image';
 
 export type SinglePortfolioProps = {
   post: Awaited<ReturnType<typeof getPost>>;
@@ -22,14 +21,29 @@ export default function SinglePortfolio({
           {...category}
         />
       ))}
-      {postSections.map((section) => (
-        <div
-          key={`${section.posts?.id || 'post'}_${section.id}`}
-          className="border my-2 p-2"
-        >
-          <MDXRemote source={section.content} />
-        </div>
-      ))}
+      {post.thumbnail_url && (
+        <Image
+          src={post.thumbnail_url}
+          alt={post.title}
+          width={300}
+          height={300}
+          unoptimized
+          priority={false}
+        />
+      )}
+      {postSections
+        .sort((a, b) => a.section_order - b.section_order)
+        .map((section) => (
+          <div
+            key={`${section.posts?.id || 'post'}_${section.id}`}
+            className="border my-2 p-2"
+          >
+            <MDXRemote source={section.content} />
+            {section.external_reference_url && (
+              <span className="text-sm">{section.external_reference_url}</span>
+            )}
+          </div>
+        ))}
     </>
   );
 }

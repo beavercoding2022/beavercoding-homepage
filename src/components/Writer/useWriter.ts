@@ -305,6 +305,15 @@ export default function useWriter(props: UseWriterProps) {
           post_id: postData.id,
           category_id: category.id,
         })),
+      )
+      .reduce(
+        (acc, cur) => {
+          if (acc.find((item) => item.category_id === cur.category_id)) {
+            return acc;
+          }
+          return [...acc, cur];
+        },
+        [] as { post_id: number; category_id: number }[],
       );
 
     const { error: postCategoriesError } = await supabase

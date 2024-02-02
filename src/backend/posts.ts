@@ -20,6 +20,10 @@ export async function getPosts(
       `,
     )
     .eq('posting_type', type)
+    .order('section_order', {
+      ascending: true,
+      referencedTable: 'post_sections',
+    })
     .order('created_at', { ascending: false })
     .range(page * pageSize - pageSize, page * pageSize - 1);
   if (error) {
@@ -49,6 +53,10 @@ export async function getFullPost(
     )
     .eq('slug', slug)
     .eq('posting_type', postingType)
+    .order('section_order', {
+      ascending: true,
+      referencedTable: 'post_sections',
+    })
     .single();
   if (error) {
     throw error;
