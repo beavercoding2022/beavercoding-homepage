@@ -18,6 +18,7 @@ export default function CategoryIcon({
         height={size || 30}
         alt={name}
         priority={false}
+        unoptimized
         className="m-0"
       />
     );
@@ -30,6 +31,7 @@ export default function CategoryIcon({
       height={size || 30}
       alt={name}
       priority={false}
+      unoptimized
       className="m-0"
     />
   );
