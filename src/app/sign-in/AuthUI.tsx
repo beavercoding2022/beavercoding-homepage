@@ -14,7 +14,7 @@ export default function AuthUI() {
     await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: getURL(),
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
