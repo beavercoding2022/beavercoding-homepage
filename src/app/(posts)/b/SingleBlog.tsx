@@ -3,6 +3,7 @@ import CategoryIcon from '@/src/components/icons/CategoryIcon';
 import CategoryLinkWithIcon from '@/src/components/icons/CategoryLinkWithIcon';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
+import React from 'react';
 
 export type SingleBlogProps = {
   post: Awaited<ReturnType<typeof getPost>>;
@@ -32,11 +33,8 @@ export default function SingleBlog({ post, postSections }: SingleBlogProps) {
       ))}
 
       {postSections.map((section) => (
-        <>
-          <div
-            key={`${section.posts?.id || 'post'}_${section.id}`}
-            className="border my-2 p-2"
-          >
+        <React.Fragment key={`${section.posts?.id || 'post'}_${section.id}`}>
+          <div className="border my-2 p-2">
             <MDXRemote source={section.content} />
           </div>
           <div className="flex flex-row">
@@ -47,7 +45,7 @@ export default function SingleBlog({ post, postSections }: SingleBlogProps) {
               />
             ))}
           </div>
-        </>
+        </React.Fragment>
       ))}
     </>
   );

@@ -4,6 +4,7 @@ import CategoryLinkWithIcon from '@/src/components/icons/CategoryLinkWithIcon';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
 import Link from 'next/link';
+import React from 'react';
 
 export type SingleDocumentProps = {
   post: Awaited<ReturnType<typeof getPost>>;
@@ -36,9 +37,8 @@ export default function SingleDocument({
         />
       ))}
       {postSections.map((section) => (
-        <>
+        <React.Fragment key={`${section.posts?.id || 'post'}_${section.id}`}>
           <div
-            key={`${section.posts?.id || 'post'}_${section.id}`}
             id={`${section.posts?.id || 'post'}_${section.id}`}
             className="border my-2 p-2"
           >
@@ -52,7 +52,7 @@ export default function SingleDocument({
               />
             ))}
           </div>
-        </>
+        </React.Fragment>
       ))}
     </>
   );
