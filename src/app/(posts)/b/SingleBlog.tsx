@@ -23,25 +23,31 @@ export default function SingleBlog({ post, postSections }: SingleBlogProps) {
           priority={false}
         />
       )}
+
       {post.categories.map((category) => (
         <CategoryLinkWithIcon
           key={`post_categories_${category.id}`}
           {...category}
         />
       ))}
+
       {postSections.map((section) => (
-        <div
-          key={`${section.posts?.id || 'post'}_${section.id}`}
-          className="border my-2 p-2"
-        >
-          <MDXRemote source={section.content} />
-          {section.categories.map((category) => (
-            <CategoryIcon
-              key={`section_${section.id}_categories_${category.id}`}
-              {...category}
-            />
-          ))}
-        </div>
+        <>
+          <div
+            key={`${section.posts?.id || 'post'}_${section.id}`}
+            className="border my-2 p-2"
+          >
+            <MDXRemote source={section.content} />
+          </div>
+          <div className="flex flex-row">
+            {section.categories.map((category) => (
+              <CategoryIcon
+                key={`section_${section.id}_categories_${category.id}`}
+                {...category}
+              />
+            ))}
+          </div>
+        </>
       ))}
     </>
   );
