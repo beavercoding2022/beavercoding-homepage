@@ -44,6 +44,14 @@ export default function SingleDocument({
           >
             <MDXRemote source={section.content} />
           </div>
+          {section.external_reference_url && (
+            <Link
+              href={section.external_reference_url}
+              className="text-sm underline-none text-gray-400"
+            >
+              Read More on external link
+            </Link>
+          )}
           <div className="flex flex-row">
             {section.categories.map((category) => (
               <CategoryIcon

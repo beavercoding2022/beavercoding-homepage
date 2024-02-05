@@ -3,6 +3,7 @@ import CategoryIcon from '@/src/components/icons/CategoryIcon';
 import CategoryLinkWithIcon from '@/src/components/icons/CategoryLinkWithIcon';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 export type SingleBlogProps = {
@@ -37,6 +38,14 @@ export default function SingleBlog({ post, postSections }: SingleBlogProps) {
           <div className="border my-2 p-2">
             <MDXRemote source={section.content} />
           </div>
+          {section.external_reference_url && (
+            <Link
+              href={section.external_reference_url}
+              className="text-sm underline-none text-gray-400"
+            >
+              Read More on external link
+            </Link>
+          )}
           <div className="flex flex-row">
             {section.categories.map((category) => (
               <CategoryIcon

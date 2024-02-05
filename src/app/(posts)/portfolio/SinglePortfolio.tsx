@@ -2,6 +2,7 @@ import { getPost, getPostSectionsBySlug } from '@/src/backend/posts';
 import CategoryLinkWithIcon from '@/src/components/icons/CategoryLinkWithIcon';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export type SinglePortfolioProps = {
   post: Awaited<ReturnType<typeof getPost>>;
@@ -41,6 +42,14 @@ export default function SinglePortfolio({
             <MDXRemote source={section.content} />
             {section.external_reference_url && (
               <span className="text-sm">{section.external_reference_url}</span>
+            )}
+            {section.external_reference_url && (
+              <Link
+                href={section.external_reference_url}
+                className="text-sm underline-none text-gray-400"
+              >
+                Read More on external link
+              </Link>
             )}
           </div>
         ))}
