@@ -42,6 +42,7 @@ export default function SingleBlog({ post, postSections }: SingleBlogProps) {
             <Link
               href={section.external_reference_url}
               className="text-sm underline-none text-gray-400"
+              target="_blank"
             >
               Read More on external link
             </Link>
