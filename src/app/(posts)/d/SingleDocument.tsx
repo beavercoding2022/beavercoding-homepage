@@ -48,6 +48,7 @@ export default function SingleDocument({
             <Link
               href={section.external_reference_url}
               className="text-sm underline-none text-gray-400"
+              rel="noopener noreferrer"
               target="_blank"
             >
               Read More on external link
