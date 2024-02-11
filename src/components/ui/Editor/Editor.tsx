@@ -38,7 +38,6 @@ import {
   useCodeBlockEditorContext,
 } from '@mdxeditor/editor';
 import React from 'react';
-import styles from './Editor.module.css';
 
 export type EditorProps = MDXEditorProps & {
   markdown: string;
