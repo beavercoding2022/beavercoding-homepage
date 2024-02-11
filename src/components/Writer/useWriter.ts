@@ -104,7 +104,7 @@ export default function useWriter(props: UseWriterProps) {
   const handleUploadImage = React.useCallback(
     async (image: File) => {
       const imageNameUuid = uuidv4();
-      const path = `${props.posting_type}/${state.uuid}/${imageNameUuid}`;
+      const path = `${props.posting_type}/${state.uuid}/${imageNameUuid}_${image.name}`;
 
       const { data, error } = await supabase.storage
         .from('images')
@@ -419,8 +419,10 @@ export default function useWriter(props: UseWriterProps) {
 
     const { error: postCategoriesError } = await supabase
       .from('post_categories')
-      .insert(postCategoriesToBeInserted);
-
+      .upsert(postCategoriesToBeInserted, {
+        onConflict: 'post_id,category_id',
+        ignoreDuplicates: true, // ignore if the same category is already inserted
+      });
     if (postCategoriesError) {
       throw { ...postCategoriesError, cause: 'upsert post_categories' };
     }
@@ -448,6 +450,8 @@ export default function useWriter(props: UseWriterProps) {
     if (postCategoriesDeleteError) {
       throw { ...postCategoriesDeleteError, cause: 'delete post_categories' };
     }
+
+    console.log({ sections });
 
     const postSectionsToBeInserted = sections
       .filter((section) => section.nextMode === 'create')
@@ -501,9 +505,11 @@ export default function useWriter(props: UseWriterProps) {
         content: section.content,
         external_reference_url: section.external_reference_url,
         image_paths: section.image_paths,
-        categories: section.categories,
-      }))
-      .map(async ({ id, categories, ...section }) => {
+        categories: section.category_state.searched,
+      }));
+
+    const postSectionUpdatePromises = postSectionsToBeUpdated.map(
+      async ({ id, categories, ...section }) => {
         const { error: updatePostSectionError } = await supabase
           .from('post_sections')
           .update(section)
@@ -513,6 +519,12 @@ export default function useWriter(props: UseWriterProps) {
           throw { ...updatePostSectionError, cause: 'update post_sections' };
         }
 
+        console.log(
+          categories
+            .filter((category) => category.isDeletedInEditMode)
+            .map((cat) => cat.id!),
+        );
+
         const { error: deletePostSectionCategoriesError } = await supabase
           .from('post_section_categories')
           .delete()
@@ -521,7 +533,8 @@ export default function useWriter(props: UseWriterProps) {
             categories
               .filter((category) => category.isDeletedInEditMode)
               .map((cat) => cat.id!),
-          );
+          )
+          .eq('post_section_id', id);
 
         if (deletePostSectionCategoriesError) {
           throw {
@@ -546,9 +559,10 @@ export default function useWriter(props: UseWriterProps) {
             cause: 'insert post_section_categories',
           };
         }
-      });
+      },
+    );
 
-    await Promise.all(postSectionsToBeUpdated);
+    await Promise.all(postSectionUpdatePromises);
 
     const postSectionIdsToBeDeleted = sections
       .filter((section) => section.nextMode === 'delete')

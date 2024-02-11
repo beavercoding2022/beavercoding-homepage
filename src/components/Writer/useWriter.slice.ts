@@ -372,6 +372,7 @@ export function useWriterSliceCreatorFn(props: UseWriterProps) {
           state.post_sections_state.post_sections[
             state.post_sections_state.current_index
           ];
+        prev.nextMode = 'edit'; // 아무튼 변경된건 맞음
 
         // 원래 있던 카테고리는 prev.categories에 있음
         // 새로 추가된 카테고리는 prev.category_state.searched에 isSelected가 true인 것들
