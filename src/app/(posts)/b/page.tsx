@@ -13,7 +13,7 @@ export default async function BlogIndexPage() {
   );
 
   return (
-    <div className="flex flex-col max-w-screen-md">
+    <div className="flex flex-col">
       {session && (
         <>
           <CustomLink href={'/b/write'}>Write Blog</CustomLink>

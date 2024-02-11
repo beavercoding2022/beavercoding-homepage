@@ -10,7 +10,7 @@ export default async function PortfolioPage() {
   ]);
 
   return (
-    <div className="flex flex-col max-w-screen-md">
+    <div className="flex flex-col">
       {session && (
         <>
           <CustomLink href={'/portfolio/write'}>Write Portfolio</CustomLink>

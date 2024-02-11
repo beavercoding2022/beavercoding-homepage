@@ -8,7 +8,7 @@ export default async function DocIndexPage() {
   const [session, posts] = await Promise.all([getSession(), getPosts('docs')]);
 
   return (
-    <div className="flex flex-col max-w-screen-md">
+    <div className="flex flex-col">
       {session && (
         <>
           <CustomLink href={'/d/write'}>Write Document</CustomLink>
