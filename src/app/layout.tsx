@@ -12,7 +12,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "PCJ's Homepage",
+  title: "BeaverCoding's Homepage",
   description:
     'BeaverCoding provides a simple and powerful solution for your business.',
 };
@@ -36,7 +36,7 @@ export default function RootLayout({
                 {children}
               </main>
               <footer className="w-full border-t border-t-foreground/10 p-4 flex justify-center text-center text-xs">
-                <p>Copyright © PCJ {new Date().getFullYear()}</p>
+                <p>Copyright © BeaverCoding {new Date().getFullYear()}</p>
               </footer>
             </div>
             <Toaster />
