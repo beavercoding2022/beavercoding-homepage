@@ -4,7 +4,7 @@ import '@mdxeditor/editor/style.css';
 import './globals.css';
 import { ThemeProvider } from '@/src/app/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -44,6 +44,7 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
       <GoogleAnalytics gaId="G-CKFLC784QT" />
+      <GoogleTagManager gtmId="G-CKFLC784QT" />
     </html>
   );
 }
