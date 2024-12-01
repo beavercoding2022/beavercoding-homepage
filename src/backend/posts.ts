@@ -10,7 +10,7 @@ export async function getPosts(
     pageSize: 10,
   },
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from('posts')
     .select(
@@ -38,7 +38,7 @@ export async function getFullPost(
     Database['public']['Tables']['posts']['Row']['posting_type']
   >,
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from('posts')
     .select(
@@ -70,7 +70,7 @@ export async function getPost(
     Database['public']['Tables']['posts']['Row']['posting_type']
   >,
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from('posts')
     .select('*, categories!post_categories (*)')
@@ -91,7 +91,7 @@ export async function getPostsByCategory(
     Database['public']['Tables']['posts']['Row']['posting_type']
   >,
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const query = supabase
     .from('categories')
     .select(
@@ -119,7 +119,7 @@ export async function getPostsByCategory(
 export async function getPostSectionsBySlug(
   slug: Database['public']['Tables']['posts']['Row']['slug'],
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const getDataQuery = supabase
     .from('post_sections')
     .select(`*, posts!inner(*), categories!post_section_categories (*)`)
@@ -136,7 +136,7 @@ export async function getPostSectionsBySlug(
 export async function getPostSections(
   postId: Database['public']['Tables']['posts']['Row']['id'],
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from('post_sections')
     .select('*')
@@ -150,7 +150,7 @@ export async function getPostSections(
 export async function getValidCategories(
   postingType?: Database['public']['Tables']['posts']['Row']['posting_type'],
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
 
   const baseQuery = supabase
     .from('categories')
@@ -194,7 +194,7 @@ export async function getValidCategories(
 }
 
 export async function getAllPostSeries() {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.from('post_series').select('*');
 
   if (error) {

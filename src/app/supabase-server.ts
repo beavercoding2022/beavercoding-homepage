@@ -3,14 +3,14 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 
-export const createServerSupabaseClient = cache(() => {
+export const createServerSupabaseClient = cache(async () => {
   // https://github.com/vercel/next.js/issues/56630#issuecomment-1756078597
-  cookies().getAll();
+  (await cookies()).getAll();
   return createServerComponentClient<Database>({ cookies });
 });
 
 export async function getUser() {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   try {
     const {
       data: { user },
@@ -24,7 +24,7 @@ export async function getUser() {
 }
 
 export async function getSession() {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   try {
     const {
       data: { session },
@@ -37,7 +37,7 @@ export async function getSession() {
 }
 
 export async function getUserDetails() {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   try {
     const { data: userDetails } = await supabase
       .from('users')
@@ -51,7 +51,7 @@ export async function getUserDetails() {
 }
 
 export async function getSubscription() {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   try {
     const { data: subscription } = await supabase
       .from('subscriptions')
@@ -67,7 +67,7 @@ export async function getSubscription() {
 }
 
 export const getActiveProductsWithPrices = async () => {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from('products')
     .select('*, prices(*)')

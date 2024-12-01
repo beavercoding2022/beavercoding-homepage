@@ -2,12 +2,11 @@ import { getPostsByCategory } from '@/src/backend/posts';
 import CustomLink from '@/src/components/ui/CustomLink';
 import { notFound } from 'next/navigation';
 
-export default async function DocCategoryPage({
-  params,
-}: {
-  params: { category: string };
+export default async function DocCategoryPage(props: {
+  params: Promise<{ category: string }>;
 }) {
   try {
+    const params = await props.params;
     const [posts] = await Promise.all([getPostsByCategory(params.category)]);
 
     return (

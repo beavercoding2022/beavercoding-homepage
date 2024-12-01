@@ -1,10 +1,6 @@
 import { getUser } from '@/src/app/supabase-server';
-import dynamic from 'next/dynamic';
+import WriterWrapper from '@/src/components/Writer/WriterWrapper';
 import { redirect } from 'next/navigation';
-
-const Writer = dynamic(() => import('@/src/components/Writer/Writer'), {
-  ssr: false,
-});
 
 export default async function WriteDoc() {
   const user = await getUser();
@@ -13,5 +9,5 @@ export default async function WriteDoc() {
     redirect('/');
   }
 
-  return <Writer posting_type={'docs'} />;
+  return <WriterWrapper posting_type={'docs'} />;
 }

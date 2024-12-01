@@ -6,13 +6,14 @@ import pathMapper from '@/src/utils/pathMapper';
 import { revalidatePath } from 'next/cache';
 import { notFound } from 'next/navigation';
 
-export default async function PortfolioPost({
-  searchParams,
-  params,
-}: {
-  params: { slug: string };
-  searchParams: { mode?: 'edit' };
+export default async function PortfolioPost(props: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ mode?: 'edit' }>;
 }) {
+  const [params, searchParams] = await Promise.all([
+    props.params,
+    props.searchParams,
+  ]);
   // 한글 지원
   const decodedSlug = decodeURIComponent(params.slug);
   if (searchParams.mode === 'edit') {

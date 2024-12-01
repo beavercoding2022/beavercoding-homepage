@@ -7,10 +7,10 @@ import { headers } from 'next/headers';
 
 export default async function BlogIndexPage() {
   const [session, posts] = await Promise.all([getSession(), getPosts('blog')]);
+  const awaitedHeaders = await headers();
+  const acceptedLanguage = awaitedHeaders.get('accept-language');
 
-  const [mostPreferredLanguage] = getMostPreferredLanguage(
-    headers().get('accept-language'),
-  );
+  const [mostPreferredLanguage] = getMostPreferredLanguage(acceptedLanguage);
 
   return (
     <div className="flex flex-col">

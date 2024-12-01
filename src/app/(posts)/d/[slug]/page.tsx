@@ -10,13 +10,14 @@ import pathMapper from '@/src/utils/pathMapper';
 import { revalidatePath } from 'next/cache';
 import { notFound } from 'next/navigation';
 
-export default async function DocPage({
-  params,
-  searchParams,
-}: {
-  params: { slug: string };
-  searchParams: { mode?: 'edit' };
+export default async function DocPage(props: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ mode?: 'edit' }>;
 }) {
+  const [params, searchParams] = await Promise.all([
+    props.params,
+    props.searchParams,
+  ]);
   // 한글 지원
   const decodedSlug = decodeURIComponent(params.slug);
   if (searchParams.mode === 'edit') {
