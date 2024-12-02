@@ -1,4 +1,3 @@
-import { createServerSupabaseClient } from '@/src/app/supabase-server';
 import { getPosts } from '@/src/backend/posts';
 import { Database } from '@/src/types_db';
 import { NextRequest, NextResponse } from 'next/server';

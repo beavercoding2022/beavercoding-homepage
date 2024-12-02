@@ -6,7 +6,7 @@
     "start": "next start",
     "lint": "next lint",
     "sb:type": "supabase gen types typescript --linked > src/types_db.ts",
-    "sb:pull": "npx supabase@beta db pull"
+    "sb:pull": "supabase db pull"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.0",
@@ -36,7 +36,7 @@
     "next-themes": "^0.4.3",
     "postcss": "8.4.49",
     "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc.1",
+    "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-infinite-scroller": "^1.2.6",
     "react-markdown": "^9.0.1",
     "react-merge-refs": "^2.1.1",
