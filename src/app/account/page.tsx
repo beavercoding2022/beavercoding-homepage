@@ -2,10 +2,10 @@ import {
   getSession,
   getUserDetails,
   getSubscription,
+  createClient,
 } from '@/src/app/supabase-server';
 import Button from '@/src/components/ui/Button';
 import { Database } from '@/src/types_db';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
@@ -37,7 +37,7 @@ export default async function Account() {
     'use server';
 
     const newName = formData.get('name') as string;
-    const supabase = createServerActionClient<Database>({ cookies });
+    const supabase = await createClient();
     const session = await getSession();
     if (!session) {
       throw new Error('No session found');
@@ -57,7 +57,7 @@ export default async function Account() {
     'use server';
 
     const newEmail = formData.get('email') as string;
-    const supabase = createServerActionClient<Database>({ cookies });
+    const supabase = await createClient();
     const { error } = await supabase.auth.updateUser({ email: newEmail });
     if (error) {
       console.log(error);

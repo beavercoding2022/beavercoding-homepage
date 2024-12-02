@@ -1,3 +1,4 @@
+import { useSupabase } from '@/src/app/supabase-provider';
 import {
   Post,
   PostingType,
@@ -7,11 +8,9 @@ import {
   useWriterSliceCreatorFn,
 } from '@/src/components/Writer/useWriter.slice';
 import { EditorProps } from '@/src/components/ui/Editor/Editor';
-import { Database } from '@/src/types_db';
 import pathMapper from '@/src/utils/pathMapper';
 import { MDXEditorMethods } from '@mdxeditor/editor';
 import { SelectProps } from '@radix-ui/react-select';
-import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -28,7 +27,7 @@ export default function useWriter(props: UseWriterProps) {
   const id = React.useMemo(() => uuidv4().slice(0, 8), []);
   const editorRef = React.useRef<MDXEditorMethods>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [supabase] = React.useState(() => createPagesBrowserClient<Database>());
+  const { supabase } = useSupabase();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const [modal, setModal] = React.useState<{

@@ -1,8 +1,6 @@
-import { Database } from '@/src/types_db';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { createClient } from '../../supabase-server';
 
 export async function GET(request: NextRequest) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
@@ -14,7 +12,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     // const cookieStore = cookies();
     // const supabase = createClient(cookieStore);
-    const supabase = createRouteHandlerClient<Database>({ cookies });
+    const supabase = await createClient();
     await supabase.auth.exchangeCodeForSession(code);
   }
 
