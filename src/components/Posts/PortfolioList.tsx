@@ -78,7 +78,10 @@ export default function PortfolioList({
         <section key={post.id} className="flex flex-col border-y border-dashed">
           <CustomLink href={`/portfolio/${post.slug}`}>{post.title}</CustomLink>
           <div className="flex flex-row">
-            <div className="flex flex-col flex-1 min-h-[300px] justify-center items-center border-slate-400 border-2 mr-1">
+            <a
+              className="flex flex-col flex-1 min-h-[300px] justify-center items-center border-slate-400 border-2 mr-1"
+              href={`/portfolio/${post.slug}`}
+            >
               {post?.thumbnail_url ? (
                 <Image
                   src={post.thumbnail_url}
@@ -90,7 +93,7 @@ export default function PortfolioList({
               ) : (
                 <p>No Image</p>
               )}
-            </div>
+            </a>
             <div className="flex flex-col flex-1 ml-1">
               <div>
                 Tech Stack:{' '}

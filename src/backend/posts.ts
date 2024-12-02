@@ -20,6 +20,7 @@ export async function getPosts(
       `,
     )
     .eq('posting_type', type)
+    .eq('public', true)
     .order('section_order', {
       ascending: true,
       referencedTable: 'post_sections',
