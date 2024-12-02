@@ -1,16 +1,36 @@
-import { Database } from '@/src/types_db';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { cache } from 'react';
+import { Database } from '../types_db';
 
-export const createServerSupabaseClient = cache(async () => {
-  // https://github.com/vercel/next.js/issues/56630#issuecomment-1756078597
-  (await cookies()).getAll();
-  return createServerComponentClient<Database>({ cookies });
-});
+export async function createClient() {
+  const cookieStore = await cookies();
+
+  return createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options),
+            );
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+      },
+    },
+  );
+}
 
 export async function getUser() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   try {
     const {
       data: { user },
@@ -24,7 +44,7 @@ export async function getUser() {
 }
 
 export async function getSession() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   try {
     const {
       data: { session },
@@ -37,7 +57,7 @@ export async function getSession() {
 }
 
 export async function getUserDetails() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   try {
     const { data: userDetails } = await supabase
       .from('users')
@@ -51,7 +71,7 @@ export async function getUserDetails() {
 }
 
 export async function getSubscription() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   try {
     const { data: subscription } = await supabase
       .from('subscriptions')
@@ -67,7 +87,7 @@ export async function getSubscription() {
 }
 
 export const getActiveProductsWithPrices = async () => {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('products')
     .select('*, prices(*)')

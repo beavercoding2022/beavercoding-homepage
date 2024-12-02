@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/src/app/supabase-server';
+import { createClient } from '@/src/app/supabase-server';
 import { Database } from '@/src/types_db';
 
 export async function getPosts(
@@ -10,7 +10,7 @@ export async function getPosts(
     pageSize: 10,
   },
 ) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('posts')
     .select(
@@ -38,7 +38,7 @@ export async function getFullPost(
     Database['public']['Tables']['posts']['Row']['posting_type']
   >,
 ) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('posts')
     .select(
@@ -70,7 +70,7 @@ export async function getPost(
     Database['public']['Tables']['posts']['Row']['posting_type']
   >,
 ) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('posts')
     .select('*, categories!post_categories (*)')
@@ -91,7 +91,7 @@ export async function getPostsByCategory(
     Database['public']['Tables']['posts']['Row']['posting_type']
   >,
 ) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   const query = supabase
     .from('categories')
     .select(
@@ -119,7 +119,7 @@ export async function getPostsByCategory(
 export async function getPostSectionsBySlug(
   slug: Database['public']['Tables']['posts']['Row']['slug'],
 ) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   const getDataQuery = supabase
     .from('post_sections')
     .select(`*, posts!inner(*), categories!post_section_categories (*)`)
@@ -136,7 +136,7 @@ export async function getPostSectionsBySlug(
 export async function getPostSections(
   postId: Database['public']['Tables']['posts']['Row']['id'],
 ) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('post_sections')
     .select('*')
@@ -150,11 +150,11 @@ export async function getPostSections(
 export async function getValidCategories(
   postingType?: Database['public']['Tables']['posts']['Row']['posting_type'],
 ) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
 
   const baseQuery = supabase
     .from('categories')
-    .select('*, posts!post_categories!inner (id, posting_type)');
+    .select('*, posts!post_categories!inner(id, posting_type)');
   const query = postingType
     ? baseQuery.eq('posts.posting_type', postingType)
     : baseQuery;
@@ -194,7 +194,7 @@ export async function getValidCategories(
 }
 
 export async function getAllPostSeries() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.from('post_series').select('*');
 
   if (error) {

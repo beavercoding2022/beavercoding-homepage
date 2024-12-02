@@ -1,4 +1,3 @@
-import BackButton from '@/src/components/ui/BackButton';
 import CopyCurrentUrl from '@/src/components/ui/CopyCurrentUrl';
 import { PropsWithChildren } from 'react';
 
