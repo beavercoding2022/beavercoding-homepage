@@ -1,14 +1,11 @@
 import {
-  getSession,
-  getUserDetails,
-  getSubscription,
   createClient,
+  getSession,
+  getSubscription,
+  getUserDetails,
 } from '@/src/app/supabase-server';
 import Button from '@/src/components/ui/Button';
-import { Database } from '@/src/types_db';
 import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 

@@ -5,6 +5,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "format": "prettier . --write",
     "sb:type": "supabase gen types typescript --linked > src/types_db.ts",
     "sb:pull": "supabase db pull"
   },
