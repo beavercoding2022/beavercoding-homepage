@@ -7,13 +7,15 @@
     "lint": "next lint",
     "format": "prettier . --write",
     "sb:type": "supabase gen types typescript --linked > src/types_db.ts",
-    "sb:pull": "supabase db pull"
+    "sb:pull": "supabase db pull",
+    "prisma": "prisma"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.0",
     "@mdxeditor/editor": "^3.19.3",
     "@next/mdx": "^15.0.3",
     "@next/third-parties": "^15.0.3",
+    "@prisma/adapter-pg": "^6.0.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-select": "^2.1.2",
@@ -35,6 +37,7 @@
     "next": "^15.0.3",
     "next-mdx-remote": "^5.0.0",
     "next-themes": "^0.4.3",
+    "pg": "^8.13.1",
     "postcss": "8.4.49",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
@@ -60,6 +63,7 @@
     "eslint": "9.15.0",
     "eslint-config-next": "15.0.3",
     "prettier": "^3.4.1",
+    "prisma": "^6.0.1",
     "supabase": "^1.223.10",
     "typescript": "5.7.2"
   }
