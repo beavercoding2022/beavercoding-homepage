@@ -20,7 +20,7 @@ export const metadata = {
     description:
       'BeaverCoding provides a simple and powerful solution for your business.',
     type: 'website',
-    url: `${defaultUrl}/api/og?text=BeaverCoding`,
+    images: `${defaultUrl}/api/og?text=BeaverCoding`,
   },
 };
 
