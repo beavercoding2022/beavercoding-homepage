@@ -15,6 +15,13 @@ export const metadata = {
   title: "BeaverCoding's Homepage",
   description:
     'BeaverCoding provides a simple and powerful solution for your business.',
+  openGraph: {
+    title: "BeaverCoding's Homepage",
+    description:
+      'BeaverCoding provides a simple and powerful solution for your business.',
+    type: 'website',
+    url: `${defaultUrl}/api/og?text=BeaverCoding`,
+  },
 };
 
 export default function RootLayout({
