@@ -25,7 +25,12 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className="text-foreground">
-        <ThemeProvider defaultTheme="dark" disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
           <SupabaseProvider>
             <Navbar />
             <div className="max-w-screen-lg  px-6 mx-auto">
