@@ -12,6 +12,7 @@ export default async function Navbar() {
             <nav className="space-x-2">
               <CustomLink href="/">Home</CustomLink>
               <CustomLink href="/about">About</CustomLink>
+              <CustomLink href="/portfolio">Portfolio</CustomLink>
             </nav>
           </div>
         </div>
