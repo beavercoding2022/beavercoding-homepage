@@ -6,8 +6,6 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier . --write",
-    "sb:type": "supabase gen types typescript --linked > src/types_db.ts",
-    "sb:pull": "supabase db pull",
     "prisma": "prisma"
   },
   "dependencies": {
@@ -23,10 +21,6 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
     "@reduxjs/toolkit": "^2.3.0",
-    "@supabase/auth-ui-react": "^0.4.7",
-    "@supabase/auth-ui-shared": "^0.1.8",
-    "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.46.2",
     "@tailwindcss/typography": "^0.5.15",
     "@vercel/og": "^0.6.4",
     "autoprefixer": "10.4.20",
@@ -66,7 +60,6 @@
     "eslint-config-next": "15.0.3",
     "prettier": "^3.4.1",
     "prisma": "^6.0.1",
-    "supabase": "^1.223.10",
     "typescript": "5.7.2"
   }
 }

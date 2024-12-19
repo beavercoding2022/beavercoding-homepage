@@ -1,5 +1,3 @@
-import { Metadata } from 'next';
-import { getURL } from 'next/dist/shared/lib/utils';
 import { PropsWithChildren } from 'react';
 
 export default async function AboutLayout(props: PropsWithChildren) {
