@@ -10,6 +10,10 @@ const nextConfig = {
         hostname: process.env.NEXT_PUBLIC_SUPABASE_URL,
         pathname: '**',
       },
+      {
+        hostname: process.env.NEXT_PUBLIC_SITE_URL,
+        pathname: '**',
+      },
     ],
   },
 };
